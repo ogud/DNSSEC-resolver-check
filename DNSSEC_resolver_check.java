@@ -267,7 +267,7 @@ test_results() {
 static String 
 string_result() {
     int i; 
-    String out = "Tests="; 
+    String out = "";
     for (i=1; i < test.length; i++) {
 	out = out + test_letter(i);
     }
@@ -876,7 +876,7 @@ generate_report(String resolver) {
     if (debug)
 	print (out);
 
-    String result = string_result();
+    String result = "Test= " + string_result();
     Resolv = myaddr(resolver); 
       // use this as an idicator if we can talk directly to resolver 
     String My_addr = myaddr(); // use dnsjava recursive resolver to get 
@@ -919,12 +919,6 @@ generate_report(String resolver) {
     return name;
 }
 
-    /*static boolean 
-check( boolean [] arr, int no) {
-    return test_performed[no] && arr[no];
-}	
-
-    */
 public static String
 evaluate_resolver( String resolver) {
     String out = "";

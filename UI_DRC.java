@@ -7,6 +7,7 @@ public class UI_DRC extends DNSSEC_resolver_check {
 
     static void do_eval(String resolv) {
 	String gr = evaluate_resolver(resolv); 
+	//	print("testing: " + gr);
 	String tr = new Translator().translate(gr);
 	print("Eval: " + resolv + " " + gr + " " + tr);
     }
