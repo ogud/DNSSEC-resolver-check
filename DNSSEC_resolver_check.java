@@ -876,7 +876,7 @@ generate_report(String resolver) {
     if (debug)
 	print (out);
 
-    String result = "Test= " + string_result();
+    String result = "Test=" + string_result();
     Resolv = myaddr(resolver); 
       // use this as an idicator if we can talk directly to resolver 
     String My_addr = myaddr(); // use dnsjava recursive resolver to get 
