@@ -3,6 +3,7 @@ import java.util.regex.*;
 
 public class Translator {
 
+    static boolean debug = false;   
 	protected Hashtable<String, String> trans = new Hashtable<String, String>();		
 
 	public Translator() {
@@ -27,7 +28,11 @@ public class Translator {
 	    trans.put("6d", "...F.......F.,.,NoBig");
 	    trans.put(".",  ".............,.,.");
 	}
-	
+
+	public static void set_debug(boolean val) {
+        debug = val;
+    }
+    
 	public String translate(String pfa) {
 		
 	    String g = "";
@@ -66,9 +71,12 @@ public class Translator {
 	                alt_action = pieces[2];
 	            }
 	            
-	            System.out.printf("state=%-2s, p=%s, pfa=%s,match=%s, match_action=%s, alt_action=%s, g=%s, gmod=%s\n", 
-	                   state, p, pfa, m, match_action, alt_action, g, gmod);
-	               
+                if (debug) {
+                    System.out.printf(
+                        "state=%-2s, p=%s, pfa=%s,match=%s, match_action=%s, alt_action=%s, g=%s, gmod=%s\n", 
+                        state, p, pfa, m, match_action, alt_action, g, gmod);
+	            }
+                
 	            if (trans.containsKey(match_action))
 	            {
 	                next_state = match_action;
