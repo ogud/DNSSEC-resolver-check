@@ -46,11 +46,13 @@ public class DNSSEC_resolver_check  extends Version {
     static boolean detailed_report = false;
     static int reports_failed = 0;
     static int tests_run = 0;
+    static int abort_test = 0;
     static String reason = "";  // error state 
     static boolean ad_current = false;  // AD seen or not 
     static int ed_buff = 2048;  // size of answers we accept
     static boolean ad_seen, big_ok, saw_timeout; 
     static int response_size;
+    static int rcode = 0;
     static boolean tcp_works = false;
     static String  warn_msg = "";
     static boolean failed_test = false;
@@ -61,6 +63,7 @@ public class DNSSEC_resolver_check  extends Version {
     static boolean timeout_is_failure [] = new boolean[14];
     static String test_msg [] = new String[14];
     static int    test_size [] = new int[14]; 
+    static int    R_code[] = new int[14];
     static String test_name [] = new String[14]; 
     static String zone = "submit.dnssecready.net.";
     static String getting_address = "whatsmyip." + zone;
@@ -98,6 +101,7 @@ init_variables()  {
     test_name[13] =  "Returns Bogus";     //13
     timeout_is_failure[13] = false;
     init_done = true;
+
 }
 
   /* Standardt output function */
@@ -176,8 +180,9 @@ report_reset() {
 	test_performed[i] = test[i] = ad_res[i] = timeout[i] = false;
 	test_msg[i] = null;
 	test_size[i] = 0;
+	R_code[i] = 0;
     }
-    tests_run = 0;
+    tests_run = abort_test = 0;
     saw_timeout = false;
     failed_test = false;
 }
@@ -200,8 +205,16 @@ register_test_result(int test_number, boolean result, String msg,
     ad_current = false;  // reset for next test 
     test_size[test_number] = response_size;
     test_msg[test_number] = msg + " -- " + reason; 	// record message 
+    R_code[test_number] = rcode;
+    //    print("in register result" + bad + " " + rcode + " " + response_size);
     if (result == bad) {   		// handle failed test 
- 	failed_test = true;		// 
+	//	print("in register bad " + bad + " " + rcode + " " + response_size);
+ 	failed_test = true;
+	if (rcode > 0) {
+	    //	    print("in register rcode " + bad + " " + rcode + " " + response_size);
+	    abort_test = tests_run; // 
+	    return  true;   // we abort here.
+	}
  	reason = "";                    // reset reason ?? XXX
  	return abort;    
     }
@@ -220,6 +233,8 @@ test_letter(int i) {
     String letter = "Y";
     if (test_performed[i] == false) 
 	letter = "S"; // Skipped 
+    else if (R_code[i] > 0) 
+	letter = "R=" + Rcode.string(R_code[i]);
     else if (timeout[i] == true && timeout_is_failure[i] == false) 
         letter = "T";
     else if (test[i] == true) 
@@ -264,9 +279,12 @@ test_results() {
     // function to return the string result of all the tests
 static String 
 string_result() {
-    int i; 
+    int i, top = test.length -1;
     String out = "";
-    for (i=1; i < test.length; i++) {
+    if (abort_test > 0) 
+	top = abort_test; 
+    
+    for (i=1; i <= top; i++) {
 	out = out + test_letter(i);
     }
     return out;
@@ -318,6 +336,7 @@ make_query( String domain, int type, SimpleResolver res) {
     Name name;
     int dclass = DClass.IN;
     response_size = 0;
+    rcode = 0;
     saw_timeout = false;
     if ((name = Str_to_Name(domain)) == null) 
  	return null;
@@ -385,8 +404,10 @@ first_check( SimpleResolver res, String domain, int qtype, boolean edns) {
 
     if (debug)
  	print (response);
-    if (response.getRcode() != Rcode.NOERROR) { 
- 	reason = reason + " DNS Error " + Rcode.string(response.getRcode());
+
+    rcode = response.getRcode();
+    if (rcode != Rcode.NOERROR) { 
+ 	reason = reason + " DNS Error " + Rcode.string(rcode);
  	return false;
     }
     if (!(response.getHeader().getFlag(Flags.RA))) {
@@ -929,14 +950,16 @@ evaluate_resolver( String resolver) {
     if (debug)
 	print( msg);
 
-    boolean success= run_tests(resolver, 14 /* fix later */);
+    boolean success = run_tests(resolver, 14 /* fix later */);
     if ((reason.length() > 0) && detailed_report )
 	msg = msg + " --> " + reason;
 
+    results = string_result();
     if (success == true) {
 	generate_report(resolver);
-	results = string_result();
-    }
+    } else 
+	results = results + "  ZZZZ " + msg;
+
     if(debug) 
 	print(results);
     return results;
