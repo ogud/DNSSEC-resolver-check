@@ -2,9 +2,9 @@
 # or that dnsjava is in the default CLASSPATH 
 # 
 # NOTE change this to your environment 
-DNSJAVA=/home/ogud/src/dnsjava-2.1.3
-DNSJAVA=/home/ogud/src/dnsjava-2.1.3/org/xbill/DNS
-DNSJAVA=.
+DNSJAVA=/home/ogud/src/dnsjava-2.1.4/dnsjava-2.1.4.jar
+#DNSJAVA=/home/ogud/src/dnsjava-2.1.3/org/xbill/DNS
+DNSJAVA=dnsjava-2.1.4.jar
 #constants only change if you use non Oracle java 
 
 JAVAC = javac
@@ -12,12 +12,12 @@ JAVA = java
 SUNAPIDOC = http://java.sun.com/j2se/1.4/docs/api
 JAVADOC=javadoc -classpath . -d doc -windowtitle "dnsjava documentation" -link ${SUNAPIDOC}
 
-
-JPATH = ${DNSJAVA}  # how to find classes
-CP = -classpath ${JPATH}    # comment this line out if no class path needed 
+# how to find classes
+JPATH = ${DNSJAVA}
+CP = -classpath ".;${JPATH}"    # comment this line out if no class path needed 
 JFLAGS = -g ${CP}
 JAR = jar cfe
-VERSION= 0.5.0
+VERSION= 0.5.2
 JARFILE = DNSSEC_resolver_check-${VERSION}.jar
 PROGCLASS= UI_DRC.class DNSSEC_resolver_check.class Version.class
 

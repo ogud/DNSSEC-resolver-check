@@ -2,7 +2,29 @@ import java.io.*;
 import java.net.*;
 import org.xbill.DNS.*;
 //import Translator.*;
+/*
+ * This module/library asks questions of a given resolver candiates and 
+ * reports to texamines answers from a recursive resolver to 
+    determine how compliant it is with DNSSEC by asking it a series of 
+    question. . 
+        Validator
+       Partial Validator
+       DNSSEC Aware
+       Parially DNSSEC Aware 
+       Old 
+       Not a Resolver 
 
+    The partial systems will have a descriptors reflecting their 
+    deficiencies: 
+        DNAME:  DNAME processing is not working 
+	Permissive: Returns answers that fail validation 
+	Mixed: Answers are inconsitant i.e. not all validatable answers are
+	       reported as validated. 
+	TCP:  TCP queries are not available 
+	SlowBig: Big UDP answers fail but TCP fallback is suppored
+	NoBig:   Both big UDP answers and TCP fail
+
+ */
 public class UI_DRC extends DNSSEC_resolver_check {
 
     static void do_eval(String resolv) {
@@ -45,7 +67,7 @@ public class UI_DRC extends DNSSEC_resolver_check {
 	else if (args[num_resolvers].equals("-S"))
 	    set_submit_report(false);
 	else if (args[num_resolvers].equals("-T"))
-	    set_test_results(true); 
+	    set_show_test_results(true); 
 	else if (args[num_resolvers].equals("-m")){ 
 	    if( num_resolvers + 1 < args.length ) 
 		set_message( args[++num_resolvers]);

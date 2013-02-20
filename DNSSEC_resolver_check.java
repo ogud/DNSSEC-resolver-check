@@ -4,35 +4,39 @@
 
 /** @author Olafur Gudmundsson &lt;ogud@shinkuro.com&gt; */
 /* Licence BSD */ 
-/* This program examines answers from a recursive resolver to 
-    determine how compliant it is with DNSSEC by asking it a series of 
-    question. . 
-    Uppon completion of the queries the program reports the status as
-    string: 
-       Validator
-       Partial Validator
-       DNSSEC Aware
-       Parially DNSSEC Aware 
-       Old 
-       Not a Resolver 
+/* This library/module asks questions of a resovler candidate and reports back
+   what the result of the questions where. 
+   the main method is evaluate_resolver(String)
+   it returns back a string of results of the form: 
+   [AFPTX]*[R=<code>] 
+   F = Test failed 
+   P = Test passed
+   A = Test passed with AD bit set as expected 
+   T = Timeout or error 
+   X = Test passed but with AD bit set when not possible or requested.
+   R = Test got an error code from resolver =<code> reflects that code
 
-    The partial systems will have a descriptors reflecting their 
-    deficiencies: 
-        DNAME:  DNAME processing is not working 
-	Permissive: Returns answers that fail validation 
-	Mixed: Answers are inconsitant i.e. not all validatable answers are
-	       reported as validated. 
-	TCP:  TCP queries are not available 
-	SlowBig: Big UDP answers fail but TCP fallback is suppored
-	NoBig:   Both big UDP answers and TCP fail
-   This program reqires the DNSjava library
+   Other methods that can be invoked are:
+   set_abort(boolean)  tells the test functions to stop after first 
+         non-expected result only use for debugging 
+   set_show_test_results(boolean) D:off prints to standard output what 
+        is sent to central report server 
+   set_submit_report(boolean) turn [D:on]/off submitt reprot 
+
+   set_debug(boolean) turn [D:off]/on lots of debug output
+
+   set_verbose_report(boolean) turn [D:off]/on more detail on each test 
+
+   set_message(string) adds a message to the submission 
+
+   This program reqires the DNSjava library tested with version 2.1.
 */
 
 import java.io.*;
 import java.net.*;
 import org.xbill.DNS.*;
 
-public class DNSSEC_resolver_check  extends Version { 
+public class DNSSEC_resolver_check  extends Version {
     // global variables 
     static boolean abort = false;
     static boolean debug = false;   
@@ -42,7 +46,6 @@ public class DNSSEC_resolver_check  extends Version {
     static boolean detailed_report = false;
     static int reports_failed = 0;
     static int tests_run = 0;
-    static int max_fail = 14; // allow lots of failures
     static String reason = "";  // error state 
     static boolean ad_current = false;  // AD seen or not 
     static int ed_buff = 2048;  // size of answers we accept
@@ -126,13 +129,8 @@ set_abort(boolean val) {
 }
 
 public static void
-set_test_results(boolean val){
+set_show_test_results(boolean val){
     show_report = val;
-}
-
-public static void 
-set_max_fail(String inp) {
-  max_fail = Integer.valueOf(inp);
 }
 
 public static void 
@@ -725,7 +723,7 @@ get_resolver( String resolver){
     return tcp;
 }
 
-public static boolean
+private static boolean
 tcp_test(String resolver) {
     SimpleResolver tcp; 
     tcp_works = false;
@@ -742,7 +740,7 @@ tcp_test(String resolver) {
 }
 
     // runs all the tests for one resolver input name or address of resolver
-public static boolean 
+private static boolean 
 run_tests( String resolver, int fail_allowed) {
     big_ok = false;
     SimpleResolver res = get_resolver(resolver);
@@ -810,7 +808,7 @@ run_tests( String resolver, int fail_allowed) {
 }
 
 
-public static String 
+private static String 
 addr_lookup(String resolver) {
     if (debug)
 	print("addr_lookup: " + resolver);
@@ -868,7 +866,7 @@ set_message( String msg) {
 
 
     /* generate_report will send a report back to central resolver */
-public static String 
+private static String 
 generate_report(String resolver) { 
     String out = "Generate_report:" + " " + resolver + " " + submit_report;
     String Resolv = "N/A";
