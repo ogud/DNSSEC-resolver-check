@@ -1,7 +1,12 @@
-This is a java application that evaluates how well a resolver supports DNSSEC
-as seen from the location that the applicaiton runs. 
+
+This is a set of java classes application that evaluates how well a
+resolver supports DNSSEC as seen from the location that the applicaiton runs. 
 
 The evaluation is submitted to a central server operated by us. 
+
+This collection depends on dnsjava 
+please put a recent dnsjava jar file (>2.1.3) in the current directory
+and update the Makefile to reflect it. 
 
 New report format: 
  Tests=<str>.NS=<ip1/name>.Resolv=<ip2>.Me=<ip3>.Version=<str>.Msg=<str>.submit.dnssecready.net
