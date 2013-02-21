@@ -3,14 +3,14 @@ import java.net.*;
 import org.xbill.DNS.*;
 //import Translator.*;
 /*
- * This module/library asks questions of a given resolver candiates and 
+ * This module/library asks questions of given resolver candidates and 
  * reports to texamines answers from a recursive resolver to 
     determine how compliant it is with DNSSEC by asking it a series of 
     question. . 
-        Validator
+       Validator
        Partial Validator
        DNSSEC Aware
-       Parially DNSSEC Aware 
+       Partially DNSSEC Aware 
        Old 
        Not a Resolver 
 
@@ -18,10 +18,10 @@ import org.xbill.DNS.*;
     deficiencies: 
         DNAME:  DNAME processing is not working 
 	Permissive: Returns answers that fail validation 
-	Mixed: Answers are inconsitant i.e. not all validatable answers are
+	Mixed: Answers are inconsistent i.e. not all validatable answers are
 	       reported as validated. 
 	TCP:  TCP queries are not available 
-	SlowBig: Big UDP answers fail but TCP fallback is suppored
+	SlowBig: Big UDP answers fail but TCP fallback is supported
 	NoBig:   Both big UDP answers and TCP fail
 
  */
@@ -29,7 +29,7 @@ public class UI_DRC extends DNSSEC_resolver_check {
 
     static void do_eval(String resolv) {
 	String gr = evaluate_resolver(resolv); 
-	//	print("testing: " + gr);
+	//print("testing: " + gr);
 	String tr = new Translator().translate(gr);
 	print("Eval: " + resolv + " " + gr + " " + tr);
     }

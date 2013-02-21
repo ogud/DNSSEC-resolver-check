@@ -9,7 +9,8 @@ public class Translator {
 	public Translator() {
 
 	    trans.put("0",  "NAR,1,=NAR.");
-	    trans.put("1",  "[FT]............,2,=NAR.");
+        trans.put("1",  "R=([a-zA-Z]+).*,1a,=*.");
+	    trans.put("1a",  "[FT]............,2,=NAR.");
 	    trans.put("2",  ".[PFX][PFX][PFX][PFX][PF][APF][APF][APF][APF][APF][APF].,=TIMEOUT.,3");
 	    trans.put("3",  ".[PF][PF][PF][PF]........,=ANOMALOUS.,4");
 	    trans.put("4",  "PP...P[AP][AP].[AP]...,=NOTDNSSEC.,5");
@@ -93,6 +94,10 @@ public class Translator {
 	                if (match_action.indexOf("=")==0)
 	                {
 	                    g = match_action.substring(1);
+	                    if (g.equals("*"))
+	                    {
+	                    	g = matcher.group(1);
+	                    }
 	                }
 	                else
 	                {
