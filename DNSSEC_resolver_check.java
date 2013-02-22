@@ -36,7 +36,7 @@ import java.io.*;
 import java.net.*;
 import org.xbill.DNS.*;
 
-public class DNSSEC_resolver_check  extends Version {
+public class DNSSEC_resolver_check {
     // global variables 
     static boolean abort = false;
     static boolean debug = false;   
@@ -105,11 +105,16 @@ init_variables()  {
 }
 
   /* Standardt output function */
-static void 
+private static void 
 print (Object o) {
     System.out.println(o); 
 }
-    
+
+public static String [] 
+get_local_resolvers() {
+	return ResolverConfig.getCurrentConfig().servers();
+}
+
   /* convert from Sting to Name (DNS format) 
    * hide exceptions (that should not happen)
    */
@@ -902,8 +907,8 @@ generate_report(String resolver) {
     // own address 
     
     String name = result + ".NS=" + resolver + 
-      ".Resolv=" + Resolv + ".Me=" + My_addr + ".Version=" + get_version()
-      + user_message;
+      ".Resolv=" + Resolv + ".Me=" + My_addr + ".Version=" + 
+	Version.get_version() + user_message;
 	// submit directly to authoritave resolver
     if (submit_report) {
 	Message msg = null;
@@ -957,7 +962,7 @@ evaluate_resolver( String resolver) {
     results = string_result();
     if (success == true) {
 	generate_report(resolver);
-    } else 
+    } else if (detailed_report)
 	results = results + "  ZZZZ " + msg;
 
     if(debug) 
