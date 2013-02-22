@@ -1,7 +1,6 @@
 import java.io.*;
-import java.net.*;
-import org.xbill.DNS.*;
-//import Translator.*;
+//import java.net.*;
+
 /*
  * This module/library asks questions of given resolver candidates and 
  * reports to texamines answers from a recursive resolver to 
@@ -25,13 +24,16 @@ import org.xbill.DNS.*;
 	NoBig:   Both big UDP answers and TCP fail
 
  */
-public class UI_DRC extends DNSSEC_resolver_check {
-
+public class UI_DRC {
+    static boolean long_report = false;
     static void do_eval(String resolv) {
-	String gr = evaluate_resolver(resolv); 
+	String gr = new DNSSEC_resolver_check().evaluate_resolver(resolv); 
 	//print("testing: " + gr);
 	String tr = new Translator().translate(gr);
-	print("Eval: " + resolv + " " + gr + " " + tr);
+	if (long_report)
+	    System.out.println("Eval: " + resolv + " Tests=" + gr + " Result=" + tr);
+	else 
+	    System.out.println("Result: " + resolv + " " + tr);
     }
 
     public static void 
@@ -52,46 +54,48 @@ public class UI_DRC extends DNSSEC_resolver_check {
 	
 	int num_resolvers = 0; 
 	boolean resolver_evaluated = false;
-	String [] list = ResolverConfig.getCurrentConfig().servers(); 
+	//	String [] list = ResolverConfig.getCurrentConfig().servers(); 
+	String [] list = DNSSEC_resolver_check.get_local_resolvers();
 	int abort = 999999999; 
 	
-	set_abort(false);
-	set_submit_report(true);
+	DNSSEC_resolver_check.set_abort(false);
+	DNSSEC_resolver_check.set_submit_report(true);
 	for (num_resolvers = 0; args.length > num_resolvers; num_resolvers++) {
 	    if (args[num_resolvers].equals("-a") )
-		set_abort(true);
+		DNSSEC_resolver_check.set_abort(true);
 	    else if (args[num_resolvers].equals("-d"))
-		set_debug(true);
- 	else if (args[num_resolvers].equals("-r"))
-	    set_verbose_report(true);
-	else if (args[num_resolvers].equals("-S"))
-	    set_submit_report(false);
-	else if (args[num_resolvers].equals("-T"))
-	    set_show_test_results(true); 
-	else if (args[num_resolvers].equals("-m")){ 
-	    if( num_resolvers + 1 < args.length ) 
-		set_message( args[++num_resolvers]);
-	    else 
-		print( "-m must be followed by a message");
-	} else if (args[num_resolvers].equals("-l")) {
-	    String msg = "Configured resolvers ";
-	    for (int i =0 ; i < list.length; i++)
-		msg = msg + " " + list[i]; 
-	    print (msg);
-	    num_resolvers = abort;
- 	} else if (args[num_resolvers].equals("-h")){
-	    print(usage);
-	    num_resolvers = abort; // abort 
-	} else { 
-	    resolver_evaluated = true;
-	    do_eval(args[num_resolvers]);
-	}
+		DNSSEC_resolver_check.set_debug(true);
+	    else if (args[num_resolvers].equals("-r")) {
+		DNSSEC_resolver_check.set_verbose_report(true);
+		long_report = true;
+	    }
+	    else if (args[num_resolvers].equals("-S"))
+		DNSSEC_resolver_check.set_submit_report(false);
+	    else if (args[num_resolvers].equals("-T"))
+		DNSSEC_resolver_check.set_show_test_results(true); 
+	    else if (args[num_resolvers].equals("-m")){ 
+		if( num_resolvers + 1 < args.length ) 
+		    DNSSEC_resolver_check.set_message( args[++num_resolvers]);
+		else 
+		    System.out.println( "-m must be followed by a message");
+	    } else if (args[num_resolvers].equals("-l")) {
+		String msg = "Configured resolvers ";
+		for (int i =0 ; i < list.length; i++)
+		    msg = msg + " " + list[i]; 
+		System.out.println (msg);
+		num_resolvers = abort;
+	    } else if (args[num_resolvers].equals("-h")){
+		System.out.println(usage);
+		num_resolvers = abort; // abort 
+	    } else { 
+		resolver_evaluated = true;
+		do_eval(args[num_resolvers]);
+	    }
 	}
 	if (resolver_evaluated == false && num_resolvers < abort) 
 	    for (int cnt  = 0; cnt < list.length; cnt++) {
 		do_eval(list[cnt]);
 	    }
 	
-	System.exit(reports_failed);
     }
 }
