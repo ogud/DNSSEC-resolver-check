@@ -8,6 +8,22 @@ This collection depends on dnsjava
 please put a recent dnsjava jar file (>2.1.3) in the current directory
 and update the Makefile to reflect it. 
 
+Usage of command line tool: UI_DRC 
+      java UI_DRC <options> <resolver candidates> 
+or    java -jar UI_DRC-0.5.5.jar <options> <resolver candidates> 
+      options: 
+       -a # Aborts on first error for each resolver
+       -d # prints lots of debug info
+       -h # prints help and exits
+       -l # Lists the locally configured resolvers and exits
+       -r # detailed report on screen
+       -S # DO not SUBMIT results
+       -T # Show compact from of test results
+       -m <string> # A string that gets added to the report as an identifier 
+	Example: starbucks
+          #  No resolvers listed, use configured resolvers
+   resolvers can be addresses or names
+
 New report format: 
  Tests=<str>.NS=<ip1/name>.Resolv=<ip2>.Me=<ip3>.Version=<str>.Msg=<str>.submit.dnssecready.net
 

@@ -38,17 +38,17 @@ public class UI_DRC {
     public static void 
     main(String [] args) throws Exception {
 	String usage = 
-	    "Usage: java -jar DNSSEC-resolver-check.jar -[ahdrS] <resolvers> \n" 
+	    "Usage: java UI_DRC.java -[adhlrST] [-m <msg>] [<resolvers>] \n" 
 	    + "     :  -a # Aborts on first error for each resolver\n"  
 	    + "     :  -d # prints lots of debug info\n"
 	    + "     :  -h # prints help and exits\n"  
 	    + "     :  -l # Lists the locally configured resolvers and exits\n" 
 	    + "     :  -r # detailed report on screen\n"
+	    + "     :  -S # DO not SUBMIT results\n" 
 	    + "     :  -T # Show compact from of test results\n"
 	    + "     :  -m # A string that gets added to the report an identifier " 
-	    + "or something like that\n\tExample: starbucks\n" 
-	    + "     :  -S # DO not SUBMIT results\n" 
-	    + "     :    # No resolvers listed, use configured resolvers\n" 
+	    + "\n\tExample: starbucks\n" 
+	    + "     :    # No resolvers listed, use the configured resolvers\n" 
 	    + "   resolvers can be addresses or names";
 	
 	int num_resolvers = 0; 
