@@ -110,9 +110,22 @@ print (Object o) {
     System.out.println(o); 
 }
 
+private static void 
+set_reason( String msg) {
+  reason = msg;
+}
+
+  public static void add_reason(String str){
+    reason += reason + " " + str + "\n";
+  }
+
+  public static String get_reason() {
+    return reason; 
+  }
+
 public static String [] 
 get_local_resolvers() {
-	return ResolverConfig.getCurrentConfig().servers();
+  return ResolverConfig.getCurrentConfig().servers();
 }
 
   /* convert from Sting to Name (DNS format) 
@@ -124,7 +137,7 @@ Str_to_Name( String na) {
     try { 
  	my_name = Name.fromString(na, Name.root);
     } catch (Exception e) {
- 	reason = reason + "Name error rrsig_check " + na;
+      add_reason("Name error rrsig_check " + na);
  	my_name = null;
     }
     return my_name;
@@ -209,7 +222,7 @@ register_test_result(int test_number, boolean result, String msg,
     ad_res[test_number] = ad_current;
     ad_current = false;  // reset for next test 
     test_size[test_number] = response_size;
-    test_msg[test_number] = msg + " -- " + reason; 	// record message 
+    test_msg[test_number] = msg + " -- " + get_reason(); // record message 
     R_code[test_number] = rcode;
     //    print("in register result" + bad + " " + rcode + " " + response_size);
     if (result == bad) {   		// handle failed test 
@@ -220,7 +233,7 @@ register_test_result(int test_number, boolean result, String msg,
 	    abort_test = tests_run; // 
 	    return  true;   // we abort here.
 	}
- 	reason = "";                    // reset reason ?? XXX
+ 	set_reason("");                    // reset reason 
  	return abort;    
     }
     test[test_number]  = true;      // got expected result ? 
@@ -229,7 +242,7 @@ register_test_result(int test_number, boolean result, String msg,
 
 void 
 display_result() {
-    print(reason);
+    print(get_reason());
 }
     /* this function returns the letter reflecting the result of the test */
 
@@ -351,10 +364,10 @@ make_query( String domain, int type, SimpleResolver res) {
  	query = Message.newQuery(rec);
     } 
     catch (Exception e) {
- 	reason = reason + "Query Construction Error " + domain + " " + 
-	    Type.string(type);
+        add_reason( "Query Construction Error " + domain + " " + 
+		    Type.string(type));
 	if (debug) 
-	    print (reason);
+	    print (get_reason());
  	return null;
     }
 
@@ -365,15 +378,15 @@ make_query( String domain, int type, SimpleResolver res) {
       if (debug) {
 	print ("catching Timeout exception");
       }
-      reason = reason + "Timeout";
+      add_reason( "Timeout");
       saw_timeout = true;
       return null;
     }
     catch (Exception e) {
-      	reason = reason + "Lookup failed: "; 
+        add_reason( "Lookup failed: "); 
 	if (debug) {
 	  print ("catching socket exception: " + e);
-	  reason = reason + e;
+	  add_reason( e.toString()); //XXX need to read up
 	  //	  print (reason);
 	}
  	return null;
@@ -412,18 +425,18 @@ first_check( SimpleResolver res, String domain, int qtype, boolean edns) {
 
     rcode = response.getRcode();
     if (rcode != Rcode.NOERROR) { 
- 	reason = reason + " DNS Error " + Rcode.string(rcode);
+        add_reason( "DNS Error " + Rcode.string(rcode));
  	return false;
     }
     if (!(response.getHeader().getFlag(Flags.RA))) {
- 	reason = reason + " Error Not a recursive resolver RA flag missing ";
+        add_reason( "Error Not a recursive resolver RA flag missing");
  	return false;
     }
     Record Ans [] = response.getSectionArray(Section.ANSWER);
     
     Name name = Str_to_Name(domain);
     if(count_rr(Ans, name, qtype) == 0) {
- 	reason = reason + " No " + Type.string(qtype) + " seen in answer "; 
+        add_reason( "No " + Type.string(qtype) + " seen in answer"); 
  	return false;
     }
 
@@ -431,15 +444,14 @@ first_check( SimpleResolver res, String domain, int qtype, boolean edns) {
  	OPTRecord ORec = response.getOPT();
  	int size = response.numBytes();
  	if (ORec == null)  {
- 	    reason = reason + " No Opt returned ";
+	    add_reason( "No Opt returned ");
  	    return false;
  	} else if( size > 512) { 
  	    big_ok = true;
  	} else if (ORec.getPayloadSize() < size) {
- 	    reason = reason + " Small ENDS reported " + 
-	      ORec.getPayloadSize() + " < " + size;
-	    // not a failure 
- 	    //	    return false;
+	    add_reason( "Small ENDS reported " +  ORec.getPayloadSize() + 
+			" < " + size);
+ 	    //	    return false;	    // not a failure 
  	}
     }
     return true;
@@ -455,7 +467,7 @@ dname_check( SimpleResolver res, String domain, int type, String target,
 	     boolean count_rrsig) {
     Message response;
     if ((response = make_query(domain, type, res)) == null) {
- 	reason = reason + "DNAME lookup failed ";
+        add_reason( "DNAME lookup failed");
  	return false;
     }
     else if (debug) 
@@ -465,7 +477,7 @@ dname_check( SimpleResolver res, String domain, int type, String target,
     int cnt = response.getHeader().getCount(Section.ANSWER);
     
     if (cnt  <= 0) {
- 	reason = reason + "Empty DNAME Answer ";
+        add_reason( "Empty DNAME Answer");
  	return false;
     } 
     
@@ -477,22 +489,22 @@ dname_check( SimpleResolver res, String domain, int type, String target,
     Record Ans [] = response.getSectionArray(Section.ANSWER);
     
     if(count_rr(Ans, name, Type.DNAME) == 0) {
- 	reason = reason + " NO DNAME seen in answer "; 
+        add_reason(" NO DNAME seen in answer "); 
  	return false;
     }
     
     if (count_rrsig) {
  	if (cnt < 2) { // DNAME and target RRset are signed 
- 	    reason = reason + "Not enough records in DNAME answer " + cnt;
+	    add_reason( "Not enough records in DNAME answer " + cnt);
  	    return false ; 
  	} else if ((Ans[1].getType() != Type.RRSIG)) {
- 	    reason = reason + " Missing RRSIG(DNAME)"; 
+ 	    add_reason( "Missing RRSIG(DNAME)"); 
  	    return false;
  	} else { 
  	    int tt = ((RRSIGRecord) Ans[1]).getTypeCovered();
  	    if (tt != Type.DNAME) {
- 		reason = reason + " Wrong RRSIG(" + Type.string(tt) + 
-		    ")expecting RRSIG(DNAME)";
+ 		add_reason( "Wrong RRSIG(" + Type.string(tt) + 
+			    ")expecting RRSIG(DNAME)");
  		return false;
  	    }
  	}
@@ -503,7 +515,7 @@ dname_check( SimpleResolver res, String domain, int type, String target,
     String res_target = Ans[Ans.length - 1].getName().toString();
     if (target.equals(res_target))
  	return true;
-    reason = reason + " Dname name mismatch " + target + " != " + res_target;
+    add_reason( "Dname name mismatch " + target + " != " + res_target);
     return false;
 }
 
@@ -527,7 +539,7 @@ response_ok(SimpleResolver res, String domain, int type) {
     ad_add(response.getHeader().getFlag(Flags.AD)); // log ad bit 
 
     if (response.getRcode() != Rcode.NOERROR) {
- 	reason = reason + " RCODE=" + response.getRcode();
+ 	add_reason( "RCODE=" + response.getRcode());
  	return null;
     }
     return response;
@@ -537,7 +549,7 @@ response_ok(SimpleResolver res, String domain, int type) {
 
 static boolean 
 expect_failure( SimpleResolver res, String domain, int type) {
-    String rrr = reason; 
+    String rrr = get_reason(); 
     Message response = response_ok(res, domain, type);
     if (response == null) {
  	reason = rrr; // restore to prior state
@@ -586,14 +598,13 @@ positive_check( SimpleResolver res, String domain, int type, boolean ad) {
     bit_tc_set(response.getHeader().getFlag(Flags.TC));
 
     if (empty_answer(response) == true) {
- 	reason = reason + "Empty Answer:" + domain + " " + Type.string(type)
-	    + " ";
+ 	add_reason( "Empty Answer:" + domain + " " + Type.string(type));
  	return false; 
     }
     
     Record Ans[] = response.getSectionArray(Section.ANSWER); 
     if (Ans.length == 0) {
- 	reason = reason + " Empty answer " + domain + " " + Type.string(type);
+ 	add_reason( "Empty answer " + domain + " " + Type.string(type));
  	return false;
     }
 
@@ -602,12 +613,12 @@ positive_check( SimpleResolver res, String domain, int type, boolean ad) {
  	i++;
  
     if (i == 0) { //  did not find what I expected
- 	reason = reason + " Expected " + domain + " " + Type.string(type);
+ 	add_reason( "Expected " + domain + " " + Type.string(type));
  	return false;
     }
 
     if ( (i >= Ans.length) || (Ans[i].getType() != Type.RRSIG)) { 
-	reason = reason + " Missing RRsig " + domain + " " + Type.string(type); 
+	add_reason( "Missing RRsig " + domain + " " + Type.string(type)); 
 	return false; 
     }
     return true; 
@@ -626,8 +637,7 @@ negative_check( SimpleResolver res, String domain, int type, boolean ad) {
  	return false; 
     
     if (empty_answer(response) == false) {
- 	reason = reason + " Answer != empty " + domain + " " + 
-	    Type.string(type);
+ 	add_reason( "Answer != empty " + domain + " " + Type.string(type));
  	return false; 
     }
     
@@ -646,9 +656,9 @@ negative_check( SimpleResolver res, String domain, int type, boolean ad) {
  	    if ( x > 1)  // at least SOA and one NSECx record must be signed 
 		return true; 
 	    else
-		reason = reason + " Not enough RRSIG " + x + " ";
+		add_reason( "Not enough RRSIG " + x);
  	} else
-	    reason = reason + " Missing NSEC/NSEC3 " + n + " " + n3 ;
+	    add_reason( "Missing NSEC/NSEC3 " + n + " " + n3);
     } 
     return false; 
 }
@@ -724,7 +734,7 @@ dnssec_tests(SimpleResolver res) {
 						 Type.SOA),
 			      "Bogus returned on badly singed answer",
 			      false)) {
-	    reason = reason + " returned known bad DNSSEC answer "; 
+	    add_reason( "returned known bad DNSSEC answer"); 
 	    return false;
 	}
     }
@@ -741,9 +751,9 @@ get_resolver( String resolver){
       else 
 	tcp = new SimpleResolver();
     } catch (Exception e) {
-      	reason = reason + " Can not create resolver ";
+      	add_reason( "Can not create resolver ");
 	if (debug) 
-	  reason = reason + e;
+	    add_reason( e.toString());
  	return null;
     }
     return tcp;
@@ -758,7 +768,7 @@ tcp_test(String resolver) {
 
     tcp.setTCP(true);
     if (first_check(tcp, "net.", Type.SOA, false) == false) {
- 	reason = reason + "TCP not offered"; 
+ 	add_reason( "TCP not offered"); 
  	return false; 
     }
     tcp_works = true;
@@ -772,7 +782,7 @@ run_tests( String resolver, int fail_allowed) {
     SimpleResolver res = get_resolver(resolver);
     String msg = null;
     if (res == null) {
- 	reason = reason + " Can not create resolver"; 
+        add_reason( "Can not create resolver"); 
  	return false;
     }
     res.setTCP(false); // do not fall back to tcp
@@ -957,7 +967,7 @@ evaluate_resolver( String resolver) {
 
     boolean success = run_tests(resolver, 14 /* fix later */);
     if ((reason.length() > 0) && detailed_report )
-	msg = msg + " --> " + reason;
+	msg = msg + " --> " + get_reason();
 
     results = string_result();
     if (success == true) {
