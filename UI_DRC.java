@@ -1,5 +1,4 @@
 import java.io.*;
-//import java.net.*;
 
 /*
  * This module/library asks questions of given resolver candidates and 
