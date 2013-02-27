@@ -36,7 +36,7 @@ import java.io.*;
 import java.net.*;
 import org.xbill.DNS.*;
 
-public class DNSSEC_resolver_check {
+public class DNSSEC_resolver_check extends Squery {
     // global variables 
     static boolean abort = false;
     static boolean debug = false;   
@@ -104,12 +104,6 @@ init_variables()  {
 
 }
 
-  /* Standardt output function */
-private static void 
-print (Object o) {
-    System.out.println(o); 
-}
-
 private static void 
 set_reason( String msg) {
   reason = msg;
@@ -128,20 +122,6 @@ get_local_resolvers() {
   return ResolverConfig.getCurrentConfig().servers();
 }
 
-  /* convert from Sting to Name (DNS format) 
-   * hide exceptions (that should not happen)
-   */
-private static Name 
-Str_to_Name( String na) {
-    Name my_name = null;
-    try { 
- 	my_name = Name.fromString(na, Name.root);
-    } catch (Exception e) {
-      add_reason("Name error rrsig_check " + na);
- 	my_name = null;
-    }
-    return my_name;
-}
   /* the upcoming set of functions all set flags, this is done to allow
    * applets and other extenders of the class to set various variables. 
    */
@@ -201,7 +181,6 @@ report_reset() {
 	R_code[i] = 0;
     }
     tests_run = abort_test = 0;
-    saw_timeout = false;
     failed_test = false;
 }
     /* record test results 
@@ -217,7 +196,7 @@ register_test_result(int test_number, boolean result, String msg,
 		     boolean bad) {
   //  print( (String) "Registering " + test_number + result + bad);
     test_performed[test_number] = true;
-    timeout[test_number] = saw_timeout;
+    timeout[test_number] = query_timeout();
     tests_run++;
     ad_res[test_number] = ad_current;
     ad_current = false;  // reset for next test 
@@ -340,68 +319,6 @@ count_rr(Record ca[], Name na, int type) {
     }
     return cnt;
 }
-
-     /* make_query() a simple query interface that catches exceptions 
-      *      when there is an error it returns a null object 
-      *      hides exceptions from main program 
-      *  Arguments: domain: the domain name to look up
-      *             type: the type of the record to lookup
-      *             res: The resolver to use
-      */
-private static Message 
-make_query( String domain, int type, SimpleResolver res) {
-    Message query, response;
-    Name name;
-    int dclass = DClass.IN;
-    response_size = 0;
-    rcode = 0;
-    saw_timeout = false;
-    if ((name = Str_to_Name(domain)) == null) 
- 	return null;
-    
-    Record rec = Record.newRecord(name, type, dclass);
-    try {
- 	query = Message.newQuery(rec);
-    } 
-    catch (Exception e) {
-        add_reason( "Query Construction Error " + domain + " " + 
-		    Type.string(type));
-	if (debug) 
-	    print (get_reason());
- 	return null;
-    }
-
-    try { 
- 	response = res.send(query);
-    }
-    catch (SocketTimeoutException t) {
-      if (debug) {
-	print ("catching Timeout exception");
-      }
-      add_reason( "Timeout");
-      saw_timeout = true;
-      return null;
-    }
-    catch (Exception e) {
-        add_reason( "Lookup failed: "); 
-	if (debug) {
-	  print ("catching socket exception: " + e);
-	  add_reason( e.toString()); //XXX need to read up
-	  //	  print (reason);
-	}
- 	return null;
-    }
-
-    response_size = response.numBytes();
-
-    if (debug)  {
- 	String size= " Size " + domain + " " + Type.string(type) + " " 
- 	    + response.numBytes();
- 	print(size);
-    }
-    return response;
-}
-    
     /* first_check is used to check minimal resolver behavior 
        this function tries to catch all errors and exceptions
        as well as detecting when this is not a recursive resolver
@@ -415,7 +332,7 @@ make_query( String domain, int type, SimpleResolver res) {
 private static boolean
 first_check( SimpleResolver res, String domain, int qtype, boolean edns) {
     Message query, response;
-    response =  make_query(domain, qtype, res); 
+    response =  make_query(domain, qtype, res, debug); 
     if (response == null) 
  	return false; // failed 
     ad_add(response.getHeader().getFlag(Flags.AD)); // log ad bit 
@@ -466,7 +383,7 @@ static boolean
 dname_check( SimpleResolver res, String domain, int type, String target,
 	     boolean count_rrsig) {
     Message response;
-    if ((response = make_query(domain, type, res)) == null) {
+    if ((response = make_query(domain, type, res, debug)) == null) {
         add_reason( "DNAME lookup failed");
  	return false;
     }
@@ -531,7 +448,7 @@ empty_answer( Message msg) {
     
 static Message
 response_ok(SimpleResolver res, String domain, int type) {
-    Message response = make_query(domain, type, res); 
+  Message response = make_query(domain, type, res, debug); 
     if (response == null) 
  	return null;
     if (debug) 
@@ -742,23 +659,6 @@ dnssec_tests(SimpleResolver res) {
     return true;
 }
 
-static SimpleResolver
-get_resolver( String resolver){
-    SimpleResolver tcp; 
-    try {
-      if (resolver != null) 
-	tcp = new SimpleResolver(resolver);
-      else 
-	tcp = new SimpleResolver();
-    } catch (Exception e) {
-      	add_reason( "Can not create resolver ");
-	if (debug) 
-	    add_reason( e.toString());
- 	return null;
-    }
-    return tcp;
-}
-
 private static boolean
 tcp_test(String resolver) {
     SimpleResolver tcp; 
@@ -779,7 +679,7 @@ tcp_test(String resolver) {
 private static boolean 
 run_tests( String resolver, int fail_allowed) {
     big_ok = false;
-    SimpleResolver res = get_resolver(resolver);
+    SimpleResolver res = get_resolver(resolver, debug);
     String msg = null;
     if (res == null) {
         add_reason( "Can not create resolver"); 
@@ -848,16 +748,16 @@ private static String
 addr_lookup(String resolver) {
     if (debug)
 	print("addr_lookup: " + resolver);
-    SimpleResolver mRes = get_resolver(resolver);
+    SimpleResolver mRes = get_resolver(resolver, debug);
     if (mRes == null) { 
 	String err = "addr_lookup() failed " + resolver;
 	print(err);
 	return "NoResolver";
     }
     
-    Message msg = make_query(getting_address, Type.A, mRes);
+    Message msg = make_query(getting_address, Type.A, mRes, debug);
     if (msg == null) {
-        msg = make_query(getting_address, Type.A, mRes);
+      msg = make_query(getting_address, Type.A, mRes, debug);
     }
 
     if (msg == null)
@@ -922,9 +822,9 @@ generate_report(String resolver) {
 	// submit directly to authoritave resolver
     if (submit_report) {
 	Message msg = null;
-	SimpleResolver rep = get_resolver( submit);
+	SimpleResolver rep = get_resolver( submit, debug);
 	if ((My_addr == null) || (My_addr.length() < 6))
-	  rep = get_resolver(null);	  // go via recursive resolver
+	  rep = get_resolver(null, debug);  // go via recursive resolver
 
 	if (rep != null) {
 
@@ -932,7 +832,7 @@ generate_report(String resolver) {
 	    if (debug) {
 		print ((String) "Making query " + qname);
 	    }
-	    msg = make_query(qname, Type.TXT, rep);
+	    msg = make_query(qname, Type.TXT, rep, debug);
 	    if (msg == null)
 		print ("Report failed: " + qname);
 	    else if (msg.getHeader().getCount(Section.ANSWER) < 1)
