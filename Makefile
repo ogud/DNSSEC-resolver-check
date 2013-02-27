@@ -27,21 +27,25 @@ JFLAGS = -g ${CP} #-source 1.6 -target 1.6
 JAR = jar cfm
 VERSION= 0.5.5
 JARFILE = UI_DRC-${VERSION}.jar
-PROGCLASS= UI_DRC.class DNSSEC_resolver_check.class Version.class Translator.class 
+PROGCLASS= UI_DRC.class DNSSEC_resolver_check.class Version.class Translator.class Squery.class
 
 all: UI_DRC.class 
 
 UI_DRC.class: UI_DRC.java DNSSEC_resolver_check.class Translator.class 
 	${JAVAC} ${JFLAGS} UI_DRC.java  
 
-DNSSEC_resolver_check.class: DNSSEC_resolver_check.java Version.class
+DNSSEC_resolver_check.class: DNSSEC_resolver_check.java Version.class Squery.class
 	${JAVAC} ${JFLAGS} DNSSEC_resolver_check.java 
 
 Translator.class: Translator.java 
 	${JAVAC} ${JFLAGS} Translator.java 
 
+
 Version.class: Version.java
 	${JAVAC} ${JFLAGS} Version.java 
+
+Squery.class: Squery.java
+	${JAVAC} ${JFLAGS} Squery.java 
 
 
 Version.java: Makefile
