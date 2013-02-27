@@ -16,10 +16,12 @@ SUNAPIDOC = http://java.sun.com/j2se/1.4/docs/api
 JAVADOC=javadoc -classpath . -d doc -windowtitle "DRC documentation" -link ${SUNAPIDOC}
 
 # how to find classes
-JPATH = .:${DNSJAVA} # Unix 
-JPATH = .;${DNSJAVA} # Windows
-
-#CP = -cp "${JPATH}"    # UNIX comment this line out if no class path needed 
+# Unix variant 
+JPATH = .:${DNSJAVA}
+# Windows variant
+JPATH = .;${DNSJAVA}
+ 
+CP = -cp "${JPATH}"    # UNIX comment this line out if no class path needed 
 
 #some OS's are not yet supporting 1.7 thus I set the 1.6 execution evironment
 # Note may need to do the same for DNSJAVA 
