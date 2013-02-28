@@ -24,6 +24,7 @@
     margin-left: 25px;
 }
 .list-entry-begin {
+    margin-top: 10px;
     width: 850px;
 }
 .list-entry-left {
@@ -64,7 +65,7 @@
         
         // add tooltips to the document (anything with class list-entry-middle)
         $( document ).tooltip({content: supplyTooltipContent,
-                               items: ".list-entry-middle",
+                               items: ".list-entry-middle a",
                                show: { effect: "blind", duration: 800 },
                                hide: { effect: "blind", duration: 500 }});
 
@@ -112,7 +113,7 @@
 
     function supplyTooltipContent(htmlCB) {
         
-        var compoundUrl = $($(this).html()).attr("href");
+        var compoundUrl = this.href;
         if (compoundUrl != null) {
             var pieces = compoundUrl.split("?");
             
