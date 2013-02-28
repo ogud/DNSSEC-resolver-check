@@ -6,6 +6,7 @@
 # if DNSJAVA is set the current version of DNSJAVA and compiled
 #DNSJAVA=/home/ogud/src/dnsjava-2.1.4/dnsjava-2.1.4.jar
 DNSJAVA=../dnsjava/dnsjava-2.1.4
+DNSJAVA=../dnsjava-2.1.4
 #DNSJAVA=dnsjava-2.1.4.jar
 #constants only change if you use non Oracle java 
 
@@ -19,7 +20,7 @@ JAVADOC=javadoc -classpath . -d doc -windowtitle "DRC documentation" -link ${SUN
 # Unix variant 
 JPATH = .:${DNSJAVA}
 # Windows variant
-JPATH = .;${DNSJAVA}
+#JPATH = .;${DNSJAVA}
  
 CP = -cp "${JPATH}"    # UNIX comment this line out if no class path needed 
 
@@ -71,3 +72,10 @@ clean:
 # this is for [T]CSH to set the class path if needed 
 CP:
 	@echo "setenv CLASSPATH" \""${JPATH}"\"
+
+doc docs: docsclean
+	if test ! -d doc ; then mkdir doc ; fi
+	${JAVADOC}  com.shinkuro.DRC ## not yet
+
+docclean docsclean:	
+	rm -rf doc/*
