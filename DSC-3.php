@@ -65,7 +65,8 @@
         // add tooltips to the document (anything with class list-entry-middle)
         $( document ).tooltip({content: supplyTooltipContent,
                                items: ".list-entry-middle",
-                               show: { effect: "blind", duration: 800 }});
+                               show: { effect: "blind", duration: 800 },
+                               hide: { effect: "blind", duration: 500 }});
 
         // attach a listCtl to the UserResultsList
         $('#UserResultsList').listCtl({inhibitClick: false});
