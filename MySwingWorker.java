@@ -22,10 +22,10 @@ public class MySwingWorker extends SwingWorker<String, Void> {
 		available.acquire();
 		String g = "";
 		String tr = "";
+        DNSSEC_resolver_check check = new DNSSEC_resolver_check();
 		try {
 		    String name = "SwingWorker";
-		    g = DNSSEC_resolver_check.evaluate_resolver(ip_address, 
-								name); 
+		    g = check.evaluate_resolver(ip_address, name); 
 		}
 		catch (Exception exc) {
 		    System.err.println("Exception: " + exc);

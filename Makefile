@@ -36,9 +36,9 @@ JAVADOC=javadoc -classpath . -d doc -windowtitle "DRC documentation" -link ${SUN
 
 # how to find classes
 # Unix variant 
-JPATH = .:${DNSJAVA}
+#JPATH = .:${DNSJAVA}
 # Windows variant
-#JPATH = .;${DNSJAVA}
+JPATH = .;${DNSJAVA}
  
 CP = -cp "${JPATH}"    # UNIX comment this line out if no class path needed 
 
