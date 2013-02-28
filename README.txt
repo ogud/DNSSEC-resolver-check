@@ -33,7 +33,23 @@ New report format:
  Me=<ip3>  	   is the public IP address my servers see 
  Version=<string>  The version of the test program 
  Msg=<string>	   An indicator where the test was performed (optional) 
+ 
+ -------------------------
+ The DRC Applet and Server
 
+ The Applet and javascript can be served by a php server, if the following files are
+ present:
+ 
+    - dnsjava-2.1.4.jar             (dns stub forwarder, MUST BE SIGNED)
+    - DNSSEC_Check_Help.php         (content of the hover text help for behaviors)
+    - DNSSEC_Check_Test_Help.html   (content of the help for the tests)
+    - DSC-3.php                     (the main php file that outputs the GUI)
+    - lc.min.js                     (a jquery control used by the GUI)
+    - UI_DRC-0.5.5.jar              (the main DRC class jar, MUST BE SIGNED)
+    - DNSSEC_Check-1.0.2.jar        (the applet jar, MUST BE SIGNED)
+    
+If all these files are present in a php server folder, and you point a browser at DRC-3.php,
+you should get the DRC web page.
 
 
 
