@@ -24,9 +24,8 @@ import java.io.*;
 
  */
 public class UI_DRC {
-    static boolean long_report = false;
-    static void do_eval(String resolv) {
-	String gr = new DNSSEC_resolver_check().evaluate_resolver(resolv); 
+    static void do_eval(String resolv, String msg, boolean long_report) {
+	String gr = new DNSSEC_resolver_check().evaluate_resolver(resolv, msg); 
 	//print("testing: " + gr);
 	String tr = new Translator().translate(gr);
 	if (long_report)
@@ -56,7 +55,9 @@ public class UI_DRC {
 	//	String [] list = ResolverConfig.getCurrentConfig().servers(); 
 	String [] list = DNSSEC_resolver_check.get_local_resolvers();
 	int abort = 999999999; 
-	
+	String message = null;
+	boolean long_report = false;
+
 	DNSSEC_resolver_check.set_abort(false);
 	DNSSEC_resolver_check.set_submit_report(true);
 	for (num_resolvers = 0; args.length > num_resolvers; num_resolvers++) {
@@ -73,9 +74,10 @@ public class UI_DRC {
 	    else if (args[num_resolvers].equals("-T"))
 		DNSSEC_resolver_check.set_show_test_results(true); 
 	    else if (args[num_resolvers].equals("-m")){ 
-		if( num_resolvers + 1 < args.length ) 
-		    DNSSEC_resolver_check.set_message( args[++num_resolvers]);
-		else 
+		if( num_resolvers + 1 < args.length ) {
+		    message = args[++num_resolvers];
+		    //		    DNSSEC_resolver_check.set_message( msss);
+		} else 
 		    System.out.println( "-m must be followed by a message");
 	    } else if (args[num_resolvers].equals("-l")) {
 		String msg = "Configured resolvers ";
@@ -88,12 +90,12 @@ public class UI_DRC {
 		num_resolvers = abort; // abort 
 	    } else { 
 		resolver_evaluated = true;
-		do_eval(args[num_resolvers]);
+		do_eval(args[num_resolvers], message, long_report);
 	    }
 	}
 	if (resolver_evaluated == false && num_resolvers < abort) 
 	    for (int cnt  = 0; cnt < list.length; cnt++) {
-		do_eval(list[cnt]);
+		do_eval(list[cnt], message, long_report);
 	    }
 	
     }

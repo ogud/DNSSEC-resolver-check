@@ -66,12 +66,12 @@ public class DNSSEC_resolver_check extends Squery {
     static int    R_code[] = new int[14];
     static String test_name [] = new String[14]; 
     static String zone = "submit.dnssecready.net.";
-    static String getting_address = "whatsmyip." + zone;
     static String submit = "report.shinkuro.com.";
 
-private static void 
+private void 
 init_variables()  {
     int i=0;
+    set_zone(zone);
     test_name[0] = "None";
     timeout_is_failure[0] = true;
     test_name[1] = "Recursive Resolver";  //1 
@@ -169,7 +169,7 @@ ad_add(boolean val) {
 }
 
   /* this function resets all tracking variables between tests */
-private static void 
+private void 
 report_reset() {
     int i;
     if (init_done == false) 
@@ -191,7 +191,7 @@ report_reset() {
      *     msg    : the error message for this test 
      *     bad    : what is the wrong value for result 
      */ 
-private static boolean
+private boolean
 register_test_result(int test_number, boolean result, String msg, 
 		     boolean bad) {
   //  print( (String) "Registering " + test_number + result + bad);
@@ -329,7 +329,7 @@ count_rr(Record ca[], Name na, int type) {
 	 edns   == check if edns is included
        Returns: false if failure otherwise true. 
     */
-private static boolean
+private boolean
 first_check( SimpleResolver res, String domain, int qtype, boolean edns) {
     Message query, response;
     response =  make_query(domain, qtype, res, debug); 
@@ -379,7 +379,7 @@ first_check( SimpleResolver res, String domain, int qtype, boolean edns) {
        IN addition we have target which is what we expect the final answer 
        to be */
 
-static boolean 
+boolean 
 dname_check( SimpleResolver res, String domain, int type, String target,
 	     boolean count_rrsig) {
     Message response;
@@ -437,7 +437,7 @@ dname_check( SimpleResolver res, String domain, int type, String target,
 }
 
 
-static boolean
+boolean
 empty_answer( Message msg) {
     int cnt = msg.getHeader().getCount(Section.ANSWER);
     if (cnt <= 0) {
@@ -446,7 +446,7 @@ empty_answer( Message msg) {
     return false;
 }
     
-static Message
+Message
 response_ok(SimpleResolver res, String domain, int type) {
   Message response = make_query(domain, type, res, debug); 
     if (response == null) 
@@ -464,7 +464,7 @@ response_ok(SimpleResolver res, String domain, int type) {
 
     // asking for a name that will fail validation 
 
-static boolean 
+boolean 
 expect_failure( SimpleResolver res, String domain, int type) {
     String rrr = get_reason(); 
     Message response = response_ok(res, domain, type);
@@ -504,7 +504,7 @@ bit_tc_set( boolean val) {
     return val;
 }
 
-static boolean
+boolean
 positive_check( SimpleResolver res, String domain, int type, boolean ad) {
 
     bit_tc_clear();
@@ -542,7 +542,7 @@ positive_check( SimpleResolver res, String domain, int type, boolean ad) {
 }
 
      // checks if DNSSEC negative answer is proper
-static boolean 
+boolean 
 negative_check( SimpleResolver res, String domain, int type, boolean ad) {
     Message response;
     Name my_name; 
@@ -584,7 +584,7 @@ negative_check( SimpleResolver res, String domain, int type, boolean ad) {
     /* dnssec_tests() performs all the tests that see if an app can validate 
      * behind this resolver 
      */
-static boolean
+boolean
 dnssec_tests(SimpleResolver res) {
     String msg;
     res.setEDNS(0, ed_buff, ExtendedFlags.DO, null);
@@ -659,7 +659,7 @@ dnssec_tests(SimpleResolver res) {
     return true;
 }
 
-private static boolean
+private boolean
 tcp_test(String resolver) {
     SimpleResolver tcp; 
     tcp_works = false;
@@ -676,7 +676,7 @@ tcp_test(String resolver) {
 }
 
     // runs all the tests for one resolver input name or address of resolver
-private static boolean 
+private boolean 
 run_tests( String resolver, int fail_allowed) {
     big_ok = false;
     SimpleResolver res = get_resolver(resolver, debug);
@@ -743,56 +743,19 @@ run_tests( String resolver, int fail_allowed) {
     return dnssec_tests(res);
 }
 
-
-private static String 
-addr_lookup(String resolver) {
-    if (debug)
-	print("addr_lookup: " + resolver);
-    SimpleResolver mRes = get_resolver(resolver, debug);
-    if (mRes == null) { 
-	String err = "addr_lookup() failed " + resolver;
-	print(err);
-	return "NoResolver";
-    }
-    
-    Message msg = make_query(getting_address, Type.A, mRes, debug);
-    if (msg == null) {
-      msg = make_query(getting_address, Type.A, mRes, debug);
-    }
-
-    if (msg == null)
-	return "NANA";
-    Record Ans [] = msg.getSectionArray(Section.ANSWER); 
-    if (Ans.length > 0) {
-	int type = Ans[0].getType();
-	if ( type == Type.TXT || type == Type.A || type == Type.AAAA) {
-	    Record rr = Ans[0];
-	    String out = rr.rdataToString();
-	    if (out != null) {
-	      if (type == Type.TXT)
-		return out.substring(1,out.length()-1);
-	      else
-		return out; 
-	    }
-	    return "BAD";
-	} else
-	    return Type.string(Ans[0].getType()); 
-    }
-    return "EMPTY";
-}    
-
-public static String 
+public String 
 myaddr(String str) { 
     return addr_lookup(str); 
 }
 
-public static String 
+public String 
 myaddr() {
     return addr_lookup(submit);
 } 
 
-static String user_message = ".Msg=";
-public static void 
+String user_message = ".Msg=";
+
+public void 
 set_message( String msg) { 
   /* The input string needs to be converted into DNS label  
      right now I only copy it to the output 
@@ -802,8 +765,8 @@ set_message( String msg) {
 
 
     /* generate_report will send a report back to central resolver */
-private static String 
-generate_report(String resolver) { 
+private String 
+generate_report(String resolver, boolean submit_report, boolean debug) { 
     String out = "Generate_report:" + " " + resolver + " " + submit_report;
     String Resolv = "N/A";
 
@@ -827,8 +790,7 @@ generate_report(String resolver) {
 	  rep = get_resolver(null, debug);  // go via recursive resolver
 
 	if (rep != null) {
-
-	    String qname = name  + "." + "report." + zone;
+	    String qname = name  + "." + "report." + zone();
 	    if (debug) {
 		print ((String) "Making query " + qname);
 	    }
@@ -853,12 +815,13 @@ generate_report(String resolver) {
     return name;
 }
 
-public static String
-evaluate_resolver( String resolver) {
+public String
+    evaluate_resolver( String resolver, String id_msg) {
     String out = "";
     String msg = "Resolver " + resolver;
     String results = "Not a resolver " + resolver;
 
+    set_message(id_msg);
     reason = "";
     report_reset();
 	    
@@ -871,7 +834,7 @@ evaluate_resolver( String resolver) {
 
     results = string_result();
     if (success == true) {
-	generate_report(resolver);
+	generate_report(resolver, submit_report, debug);
     } else if (detailed_report)
 	results = results + "  ZZZZ " + msg;
 

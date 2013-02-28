@@ -13,20 +13,32 @@ import java.net.*;
 import org.xbill.DNS.*;
 
 public class Squery { 
-  static boolean saw_timeout = false;
+  boolean saw_timeout = false;
+  String zone_name = "submit.dnssecready.net.";
+  String getting_address = "whatsmyip." + zone_name;
+
   public  static void 
   print (Object o) {
     System.out.println(o); 
   }
   
-  public static boolean query_timeout() {
+  public boolean query_timeout() {
     return saw_timeout;
   }
+  
+    public void set_zone(String name) {
+	zone_name = name; 
+	getting_address =  "whatsmyip." + zone_name;
+    }
+
+    String zone() {
+	return zone_name;
+    }
 
   /* convert from Sting to Name (DNS format) 
    * hide exceptions (that should not happen)
    */
-  static Name 
+  public Name 
   Str_to_Name( String na) {
     Name my_name = null;
     try { 
@@ -38,7 +50,7 @@ public class Squery {
     return my_name;
 }
 
-static SimpleResolver
+SimpleResolver
 get_resolver( String resolver, boolean debug){
     SimpleResolver tcp; 
     try {
@@ -56,9 +68,9 @@ get_resolver( String resolver, boolean debug){
     return tcp;
 }
 
-static SimpleResolver 
+SimpleResolver 
 get_resolver(String resolver) {
-  return get_resolver(resolver, false);
+    return get_resolver(resolver, false);
 }
      /* make_query() a simple query interface that catches exceptions 
       *      when there is an error it returns a null object 
@@ -67,7 +79,7 @@ get_resolver(String resolver) {
       *             type: the type of the record to lookup
       *             res: The resolver to use t
       */
-static Message 
+Message 
 make_query( String domain, int type, SimpleResolver res, boolean debug) {
     Message query, response = null;
     Name name;
@@ -115,8 +127,53 @@ make_query( String domain, int type, SimpleResolver res, boolean debug) {
     return response;
 }
 
-static Message 
+Message 
 make_query( String domain, int type, SimpleResolver res) {
   return make_query(domain, type, res, false);
 }
+
+
+String 
+addr_lookup(String resolver, boolean debug) {
+    if (debug)
+	print("addr_lookup: " + resolver);
+    SimpleResolver mRes = get_resolver(resolver, debug);
+    if (mRes == null) { 
+	String err = "addr_lookup() failed " + resolver;
+	print(err);
+	return "NoResolver";
+    }
+    
+    Message msg = make_query(getting_address, Type.A, mRes, debug);
+    if (msg == null) {
+      msg = make_query(getting_address, Type.A, mRes, debug);
+    }
+
+    if (msg == null)
+	return "NANA";
+    Record Ans [] = msg.getSectionArray(Section.ANSWER); 
+    if (Ans.length > 0) {
+	int type = Ans[0].getType();
+	if ( type == Type.TXT || type == Type.A || type == Type.AAAA) {
+	    Record rr = Ans[0];
+	    String out = rr.rdataToString();
+	    if (out != null) {
+	      if (type == Type.TXT)
+		return out.substring(1,out.length()-1);
+	      else
+		return out; 
+	    }
+	    return "BAD";
+	} else
+	    return Type.string(Ans[0].getType()); 
+    }
+    return "EMPTY";
+}    
+
+String 
+addr_lookup(String resolver) {
+    return addr_lookup(resolver, false);
+
+}
+
 }
