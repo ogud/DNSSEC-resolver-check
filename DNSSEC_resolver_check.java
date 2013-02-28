@@ -755,12 +755,13 @@ myaddr() {
 
 String user_message = ".Msg=";
 
-public void 
+private void 
 set_message( String msg) { 
   /* The input string needs to be converted into DNS label  
      right now I only copy it to the output 
   */
-  user_message = user_message + msg;
+    if (msg != null)
+	user_message = ".Msg=" + msg;
 }
 
 
@@ -816,14 +817,14 @@ generate_report(String resolver, boolean submit_report, boolean debug) {
 }
 
 public String
-    evaluate_resolver( String resolver, String id_msg) {
+evaluate_resolver( String resolver, String id_msg) {
     String out = "";
     String msg = "Resolver " + resolver;
     String results = "Not a resolver " + resolver;
 
-    set_message(id_msg);
     reason = "";
     report_reset();
+    set_message(id_msg);
 	    
     if (debug)
 	print( msg);
@@ -842,5 +843,10 @@ public String
 	print(results);
     return results;
 }
+
+    public String
+    evaluate_resolver( String resolver) {
+	return evaluate_resolver(resolver, null);
+    }
 }
 

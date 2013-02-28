@@ -94,8 +94,9 @@ public class DNSSEC_Check extends JApplet {
 			g = AccessController.doPrivileged(new PrivilegedAction<String>() {
 				
 				public String run() {
-					String inner_g = DNSSEC_resolver_check.evaluate_resolver(ip_address); 
-					return inner_g;
+				    // String inner_g = DNSSEC_resolver_check.evaluate_resolver(ip_address, "Applet"); 
+				    return DNSSEC_resolver_check.evaluate_resolver(ip_address, "Applet"); 
+				    //				    return inner_g;
 			}});
 		}
 		catch (Exception exc) {
