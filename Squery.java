@@ -6,7 +6,7 @@
 /** @author Olafur Gudmundsson &lt;ogud@shinkuro.com&gt; */
 /* Licence BSD */ 
 /*
-   This program reqires the DNSjava library tested with version 2.1.
+   This program reqires the DNSjava library tested with version 2.1.3 and higher 
 */
 import java.io.*;
 import java.net.*;
@@ -72,6 +72,7 @@ SimpleResolver
 get_resolver(String resolver) {
     return get_resolver(resolver, false);
 }
+
      /* make_query() a simple query interface that catches exceptions 
       *      when there is an error it returns a null object 
       *      hides exceptions from main program 
@@ -83,14 +84,11 @@ Message
 make_query( String domain, int type, SimpleResolver res, boolean debug) {
     Message query, response = null;
     Name name;
-    int dclass = DClass.IN;
-    int response_size = 0;
-    int rcode = 0;
     saw_timeout = false;
     if ((name = Str_to_Name(domain)) == null) 
  	return null;
     
-    Record rec = Record.newRecord(name, type, dclass);
+    Record rec = Record.newRecord(name, type, DClass.IN);
     try {
  	query = Message.newQuery(rec);
     } 
@@ -99,7 +97,6 @@ make_query( String domain, int type, SimpleResolver res, boolean debug) {
 			    Type.string(type));
  	return null;
     }
-
     try { 
  	response = res.send(query);
     }
@@ -118,7 +115,6 @@ make_query( String domain, int type, SimpleResolver res, boolean debug) {
  	return null;
     }
 
-    response_size = response.numBytes();
     if (debug)  {
  	String size= " Size " + domain + " " + Type.string(type) + " " 
  	    + response.numBytes();
@@ -132,9 +128,17 @@ make_query( String domain, int type, SimpleResolver res) {
   return make_query(domain, type, res, false);
 }
 
-
+  /* 
+   * addr_lookup will look up the public address of this host or a resolver used 
+   * to resolve the query
+   * to get the address of this host send the query directly to one of our servers
+   * (or use the google magic query
+   * or to get the resolver send the query to a resolver
+   * Right now this only supports IPv4 queries TODO 
+   * this is the generic function that takes resolver name/addr and lookup name 
+   */ 
 String 
-addr_lookup(String resolver, boolean debug) {
+addr_lookup(String resolver, String name, boolean debug) {
     if (debug)
 	print("addr_lookup: " + resolver);
     SimpleResolver mRes = get_resolver(resolver, debug);
@@ -143,19 +147,20 @@ addr_lookup(String resolver, boolean debug) {
 	print(err);
 	return "NoResolver";
     }
-    
-    Message msg = make_query(getting_address, Type.A, mRes, debug);
-    if (msg == null) {
-      msg = make_query(getting_address, Type.A, mRes, debug);
+   
+    Message msg = make_query(name, Type.A, mRes, debug);
+    if (msg == null) {  // retry if fails 
+      msg = make_query(name, Type.A, mRes, debug);
     }
-
-    if (msg == null)
+    if (msg == null)  // no response
 	return "NANA";
+    // check RCODE ?? or punt that 
     Record Ans [] = msg.getSectionArray(Section.ANSWER); 
-    if (Ans.length > 0) {
-	int type = Ans[0].getType();
+    if (Ans.length > 0) {  // Something in answer section 
+      for (int i = 0; i < Ans.length; i++) {
+	int type = Ans[i].getType();
 	if ( type == Type.TXT || type == Type.A || type == Type.AAAA) {
-	    Record rr = Ans[0];
+	    Record rr = Ans[i];
 	    String out = rr.rdataToString();
 	    if (out != null) {
 	      if (type == Type.TXT)
@@ -163,17 +168,33 @@ addr_lookup(String resolver, boolean debug) {
 	      else
 		return out; 
 	    }
-	    return "BAD";
-	} else
-	    return Type.string(Ans[0].getType()); 
+	}
+      }
+      return Type.string(Ans[0].getType()); 
     }
     return "EMPTY";
-}    
+}
 
+  // This is a version that will look up public address
+String 
+addr_lookup( String resolver, boolean debug) {
+  return addr_lookup( resolver, getting_address, debug);
+}
+
+  // This is a version that will look up public address
 String 
 addr_lookup(String resolver) {
-    return addr_lookup(resolver, false);
+  return addr_lookup(resolver, getting_address, false);
 
 }
 
+  // Forged_addres will check if the resolver is lying ie. a captive protal 
+
+boolean 
+Forged_Address( String resolver, boolean debug) { 
+  String test = addr_lookup( resolver, "fixedaddr.dnssecready.net.", debug);
+  if (test.equals("127.252.253.254")) 
+    return false; 
+  return true;
+}
 }
