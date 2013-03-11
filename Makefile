@@ -29,16 +29,16 @@ DNSJAVA=../dnsjava-2.1.4
 #constants only change if you use non Oracle java 
 
 
-JAVAC = javac
+JAVAC = javac #-target 1.6 -source 1.6
 JAVA = java
 SUNAPIDOC = http://java.sun.com/j2se/1.4/docs/api
 JAVADOC=javadoc -classpath . -d doc -windowtitle "DRC documentation" -link ${SUNAPIDOC}
 
 # how to find classes
 # Unix variant 
-#JPATH = .:${DNSJAVA}
+JPATH = .:${DNSJAVA}
 # Windows variant
-JPATH = .;${DNSJAVA}
+#JPATH = .;${DNSJAVA}
  
 CP = -cp "${JPATH}"    # UNIX comment this line out if no class path needed 
 
@@ -46,7 +46,7 @@ CP = -cp "${JPATH}"    # UNIX comment this line out if no class path needed
 # Note may need to do the same for DNSJAVA 
 JFLAGS = -g ${CP} #-source 1.6 -target 1.6  
 JAR = jar cfm
-VERSION= 0.5.5
+VERSION= 0.5.7
 JARFILE = UI_DRC-${VERSION}.jar
 APPLET_JARFILE = DNSSEC_Check-1.0.2.jar
 PROGCLASS= UI_DRC.class DNSSEC_resolver_check.class Version.class Translator.class Squery.class
