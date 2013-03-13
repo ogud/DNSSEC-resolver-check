@@ -1,1 +1,1 @@
-Class-Path: . dnsjava-2.1.4.jar UI_DRC-0.5.5.jar
+Class-Path: . dnsjava-2.1.4.jar UI_DRC-0.5.7.jar

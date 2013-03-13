@@ -19,7 +19,7 @@ public class Translator {
 	    trans.put("7a", "....P...A....,DNAME,7b");
 	    trans.put("7b", "...F.......A.,7c,TCP");
 	    trans.put("7c", "............F,7d,Permissive");
-	    trans.put("7d", "......[AF][AF][AF][AF][AF][AF],6a,Mixed");
+	    trans.put("7d", "......[AF][AF][AF][AF][AF][AF].,Mixed,6a");
 	    trans.put("8",  ".............,8a,=DNSSEC Aware");
 	    trans.put("8a", "....P...[AP]....,DNAME,8b");
 	    trans.put("8b", "...F.......[AP].,6a,TCP)");
