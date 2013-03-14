@@ -234,7 +234,7 @@ test_letter(int i) {
     if (test_performed[i] == false) 
 	letter = "S"; // Skipped 
     else if (R_code[i] > 0) 
-	letter = "R=" + Rcode.string(R_code[i]);
+	letter = "R=" + Rcode.string(R_code[i]) + ",";
     else if (timeout[i] == true && timeout_is_failure[i] == false) 
         letter = "T";
     else if (test[i] == true) 
@@ -653,12 +653,11 @@ dnssec_tests(SimpleResolver res) {
 						 "dnssec-failed.org.", 
 						 Type.SOA),
 			      "Bogus returned on badly singed answer",
-			      false)) {
+				  false)) {
 	    add_reason( "returned known bad DNSSEC answer"); 
 	    return false;
 	}
     }
-    
     return true;
 }
 
