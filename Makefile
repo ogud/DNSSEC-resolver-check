@@ -14,7 +14,7 @@
 #  $ keytool -genkey -keyalg rsa -alias myKeyName
 #  $ keytool -export -alias myKeyName -file myCertName.crt
 #
-# Do this every time you build a jar file:
+# Do this every time you build a jar file (e.g., for EVERY jar file)
 #
 #  $ jarsigner "DNSSEC_resolver_check-0.9.9.jar" myKeyName
 #          (you'll have to type in the password you gave above)
@@ -49,12 +49,18 @@ JAR = jar cfm
 VERSION= 0.5.7
 JARFILE = UI_DRC-${VERSION}.jar
 APPLET_JARFILE = DNSSEC_Check-1.0.2.jar
+APPLICATION_JARFILE = DRC_App-1.0.0.jar
 PROGCLASS= UI_DRC.class DNSSEC_resolver_check.class Version.class Translator.class Squery.class
 APPLET_PROGCLASS= \
 	DNSSEC_Check.class \
 	DNSSEC_Check\$$1.class \
 	DNSSEC_Check\$$2.class \
     MySwingWorker.class
+APPLICATION_PROGCLASS= \
+	DRC_App.class \
+	DRC_App\$$1.class \
+	DRC_App\$$2.class \
+    DRC_App\$$3.class
 
 all: UI_DRC.class DNSSEC_Check.class
 
@@ -76,6 +82,9 @@ Squery.class: Squery.java
 DNSSEC_Check.class: DNSSEC_Check.java
 	${JAVAC} ${JFLAGS} DNSSEC_Check.java
 
+DRC_App.class: DRC_App.java
+	${JAVAC} ${JFLAGS} DRC_App.java
+
 MySwingWorker.class: MySwingWorker.java
 	${JAVAC} ${JFLAGS} MySwingWorker.java
 
@@ -91,6 +100,9 @@ applet_jar: DNSSEC_Check.class MySwingWorker.class
 	jarsigner ${APPLET_JARFILE} myKeyName
 #	jarsigner ${JARFILE} myKeyName
 #	jarsigner dnsjava-2.1.4.jar myKeyName
+
+application_jar: DRC_App.class
+	${JAR} ${APPLICATION_JARFILE} Manifest_Application.txt ${APPLICATION_PROGCLASS}
 
 clean: 
 	/bin/rm -f ${JARFILE} ${APPLET_JARFILE}  *.class *# *~
