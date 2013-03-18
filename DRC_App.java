@@ -5,6 +5,7 @@ import org.xbill.DNS.ResolverConfig;
 
 import java.awt.*;
 import java.awt.event.*;
+import java.net.URLEncoder;
 import java.util.concurrent.ExecutionException;
 import java.util.concurrent.Semaphore;
 
@@ -28,12 +29,13 @@ public class DRC_App  extends javax.swing.JFrame
 	protected final Semaphore available = new Semaphore(1, true);
 	protected String help_link = null;
 
-	protected SwingWorker<String, Void> getWorker(final int theModelIndex, final String the_ip_address) {
+	protected SwingWorker<String, Void> getWorker(final int theModelIndex, final String the_ip_address, final String the_message) {
 
 		SwingWorker<String, Void> worker = new SwingWorker<String, Void>() {
 
 			protected int inx = theModelIndex;
 			protected String ip_address = the_ip_address;
+			protected String message = the_message;
 			
 			@Override
 			public String doInBackground() throws InterruptedException {
@@ -42,7 +44,7 @@ public class DRC_App  extends javax.swing.JFrame
 				String tr = "";
 		        DNSSEC_resolver_check check = new DNSSEC_resolver_check();
 				try {
-				    g = check.evaluate_resolver(ip_address); 
+				    g = check.evaluate_resolver(ip_address, URLEncoder.encode(message, "UTF-8")); 
 				}
 				catch (Exception exc) {
 				    System.err.println("Exception: " + exc);
@@ -169,7 +171,7 @@ public class DRC_App  extends javax.swing.JFrame
 		frame.add(commentLabel, c0);
 		
 		// Create a text field to enter an identifying message
-		JTextField messageField = new JTextField(20);
+		messageField = new JTextField(20);
 		messageField.setActionCommand(identifying_string);
 		messageField.addActionListener(this);
 		messageField.setText("<Type a message and hit enter to check local resolvers>");
@@ -249,7 +251,7 @@ public class DRC_App  extends javax.swing.JFrame
 			int i = resultsListModel.getSize();
 			resultsListModel.add(i, new Behavior(true, list[num]));
 			resultsList.ensureIndexIsVisible(i);
-			SwingWorker<String, Void> w = getWorker(i, list[num]);
+			SwingWorker<String, Void> w = getWorker(i, list[num], this.messageField.getText());
 			w.execute();
 		}
 	}
@@ -262,7 +264,7 @@ public class DRC_App  extends javax.swing.JFrame
 			int i = resultsListModel.getSize();
 			resultsListModel.add(i, new Behavior(false, ip_address));
 			resultsList.ensureIndexIsVisible(i);
-			SwingWorker<String, Void> w = getWorker(i, ip_address);
+			SwingWorker<String, Void> w = getWorker(i, ip_address, messageField.getText());
 			w.execute();
 		} else if (identifying_string.equals(e.getActionCommand())) {
 			// check the local resolvers
