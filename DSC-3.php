@@ -209,6 +209,11 @@
             }
         }
         
+        var inxOfREquals = pfax.indexOf("R=");
+        if (inxOfREquals >= 0) {
+            behavior = pfax.slice(inxOfREquals+2);
+        }
+        
         item_index += 1;
         var htmlStr = "<div class='list-entry-begin' id='user-results-list-item-" + item_index + "'>" 
                     + "<span class='list-entry-left'>" + resolverAddress + "</span>" 
