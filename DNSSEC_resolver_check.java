@@ -208,6 +208,7 @@ register_test_result(int test_number, boolean result, String msg,
     if (result == bad ) {   		// handle failed test 
 	//	print("in register bad " + bad + " " + rcode + " " + response_size);
  	failed_test = true;
+	test[test_number] = false;
 	if ( timeout[test_number] && timeout_is_failure[test_number]) {
 	  if (rcode > 0) {
 	    //	    print("in register rcode " + bad + " " + rcode + " " + response_size);
