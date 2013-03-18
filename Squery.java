@@ -16,12 +16,21 @@ public class Squery {
   boolean saw_timeout = false;
   String zone_name = "submit.dnssecready.net.";
   String getting_address = "whatsmyip." + zone_name;
+  static long ttl = -1;
 
   public  static void 
   print (Object o) {
     System.out.println(o); 
   }
-  
+
+  public void save_ttl(long val) {
+    ttl = val;
+  }
+
+  public long get_ttl() {
+    return ttl;
+  }
+
   public boolean query_timeout() {
     return saw_timeout;
   }
@@ -163,6 +172,7 @@ addr_lookup(String resolver, String name, boolean debug) {
 	    Record rr = Ans[i];
 	    String out = rr.rdataToString();
 	    if (out != null) {
+	      save_ttl(Ans[i].getTTL());
 	      if (type == Type.TXT)
 		return out.substring(1,out.length()-1);
 	      else
