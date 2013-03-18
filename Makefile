@@ -60,7 +60,8 @@ APPLICATION_PROGCLASS= \
 	DRC_App.class \
 	DRC_App\$$1.class \
 	DRC_App\$$2.class \
-    DRC_App\$$3.class
+    DRC_App\$$3.class \
+    DRC_App\$$Behavior.class 
 
 all: UI_DRC.class DNSSEC_Check.class
 
