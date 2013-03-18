@@ -197,25 +197,25 @@
     
     function format_list_entry(resolverAddress, resolverBehavior) {
         
-        var resolverBehaviorPieces = ["", "working..."];
+        var pfax = "";
+        var behavior = "working...";
         if (resolverBehavior != null) {
-            var resolverBehaviorPieces = resolverBehavior.split(",");
+            var inxOfFirstComma = resolverBehavior.indexOf(",");
+            if (inxOfFirstComma >= 0) {
+                pfax = resolverBehavior.slice(0, inxOfFirstComma);
+                behavior = resolverBehavior.slice(inxOfFirstComma+1);
+            } else {
+                behavior = resolverBehavior;
+            }
         }
         
-        // olafur returns errors with extra stuff - just take the first string if there's anything
-        var pfax = resolverBehaviorPieces[0];
-        var pfax_pieces = pfax.split(" ");
-        if (pfax_pieces.length > 1) {
-            pfax = pfax_pieces[0];
-        }
-
         item_index += 1;
         var htmlStr = "<div class='list-entry-begin' id='user-results-list-item-" + item_index + "'>" 
                     + "<span class='list-entry-left'>" + resolverAddress + "</span>" 
                     + "<span class='list-entry-middle'><a href='DNSSEC_Check_Help.php?behavior=" 
-                          + encodeURIComponent(resolverBehaviorPieces[1]) 
+                          + encodeURIComponent(behavior) 
                           + "' target='drc_help'>" 
-                          + resolverBehaviorPieces[1] + "</a></span>" 
+                          + behavior + "</a></span>" 
                     + "<span class='list-entry-right'>" + pfax + "</span>"
                     + "<span class='list-entry-delete-button' title='Delete me'/>";
         htmlStr += "</div>";
