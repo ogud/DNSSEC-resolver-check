@@ -117,7 +117,7 @@ make_query( String domain, int type, SimpleResolver res, boolean debug) {
       return null;
     }
     catch (Exception e) {
-        print( "make query failed : " + response ); 
+      //        print( "make query failed : " + response ); 
 	if (debug) {
 	  print ("catching socket exception: " + e);
 	}
