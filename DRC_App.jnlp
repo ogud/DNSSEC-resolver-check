@@ -6,9 +6,8 @@
     </information>
     <resources>
         <!-- Application Resources -->
-        <j2se version="1.7+"
-            href="http://java.sun.com/products/autodl/j2se" />
-        <jar href="DRC_App-1.0.0.jar" main="true" />
+        <j2se version="1.6+" />
+        <jar href="DRC_App-1.0.0.jar"/>
     </resources>
     <application-desc 
          name="DNSSEC Resolver Check Application"
