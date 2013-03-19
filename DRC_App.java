@@ -37,7 +37,7 @@ public class DRC_App  extends javax.swing.JFrame
 
 			protected int inx = theModelIndex;
 			protected String ip_address = the_ip_address;
-			protected String message = the_message;
+			protected String message = the_message + " DRC_App";
 			
 			@Override
 			public String doInBackground() throws InterruptedException {
