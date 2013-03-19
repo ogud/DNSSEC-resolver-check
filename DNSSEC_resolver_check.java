@@ -204,13 +204,16 @@ register_test_result(int test_number, boolean result, String msg,
     test_size[test_number] = response_size;
     test_msg[test_number] = msg + " -- " + get_reason(); // record message 
     R_code[test_number] = rcode;
-    print("in register result" + bad + " " + rcode + " " + response_size);
+    if (debug) 
+      print("in register result" + bad + " " + rcode + " " + response_size);
     if (result == bad ) {   		// handle failed test 
+      if (debug) 
 	print("in register bad " + bad + " " + rcode + " " + response_size);
  	failed_test = true;
 	if ( timeout[test_number] && timeout_is_failure[test_number]) {
 	  if (rcode > 0) {
-	    print("in register rcode " + bad + " " + rcode + " " + response_size);
+	    if (debug) 
+	      print("in register rcode " + bad + " " + rcode + " " + response_size);
 	    abort_test = tests_run; // 
 	    return  true;   // we abort here.
 	  }

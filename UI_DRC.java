@@ -55,7 +55,7 @@ public class UI_DRC {
 	//	String [] list = ResolverConfig.getCurrentConfig().servers(); 
 	String [] list = DNSSEC_resolver_check.get_local_resolvers();
 	int abort = 999999999; 
-	String message = null;
+	String message = "UI_DRC";
 	boolean long_report = false;
 
 	DNSSEC_resolver_check.set_abort(false);
@@ -75,7 +75,7 @@ public class UI_DRC {
 		DNSSEC_resolver_check.set_show_test_results(true); 
 	    else if (args[num_resolvers].equals("-m")){ 
 		if( num_resolvers + 1 < args.length ) {
-		    message = args[++num_resolvers];
+		    message = args[++num_resolvers] + "." + message;
 		    //		    DNSSEC_resolver_check.set_message( msss);
 		} else 
 		    System.out.println( "-m must be followed by a message");
