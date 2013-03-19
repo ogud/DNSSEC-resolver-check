@@ -44,7 +44,8 @@ CP = -cp "${JPATH}"    # UNIX comment this line out if no class path needed
 
 #some OS's are not yet supporting 1.7 thus I set the 1.6 execution environment
 # Note may need to do the same for DNSJAVA 
-JFLAGS = -g ${CP} #-source 1.6 -target 1.6  
+JFLAGS = -g ${CP} #-source 1.6 -target 1.6
+COPY = cp  
 JAR = jar cfm
 VERSION= 0.5.7
 JARFILE = UI_DRC-${VERSION}.jar
@@ -98,15 +99,19 @@ jar: UI_DRC.class
 
 applet_jar: DNSSEC_Check.class MySwingWorker.class
 	${JAR} ${APPLET_JARFILE} Manifest_Applet.txt ${APPLET_PROGCLASS}
-	jarsigner ${APPLET_JARFILE} myKeyName
-#	jarsigner ${JARFILE} myKeyName
-#	jarsigner dnsjava-2.1.4.jar myKeyName
 
 application_jar: DRC_App.class
 	${JAR} ${APPLICATION_JARFILE} Manifest_Application.txt ${APPLICATION_PROGCLASS}
+    
+jars: jar applet_jar application_jar
+	${COPY} orig-dnsjava-2.1.4.jar dnsjava-2.1.4.jar
+	jarsigner dnsjava-2.1.4.jar myKeyName
+	jarsigner ${JARFILE} myKeyName
+	jarsigner ${APPLET_JARFILE} myKeyName
+	jarsigner ${APPLICATION_JARFILE} myKeyName
 
 clean: 
-	/bin/rm -f ${JARFILE} ${APPLET_JARFILE}  *.class *# *~
+	/bin/rm -f ${JARFILE} ${APPLET_JARFILE} ${APPLICATION_JARFILE}  *.class *# *~
 
 # this is for [T]CSH to set the class path if needed 
 CP:
