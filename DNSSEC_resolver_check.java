@@ -204,20 +204,20 @@ register_test_result(int test_number, boolean result, String msg,
     test_size[test_number] = response_size;
     test_msg[test_number] = msg + " -- " + get_reason(); // record message 
     R_code[test_number] = rcode;
-    //    print("in register result" + bad + " " + rcode + " " + response_size);
+    print("in register result" + bad + " " + rcode + " " + response_size);
     if (result == bad ) {   		// handle failed test 
-	//	print("in register bad " + bad + " " + rcode + " " + response_size);
+	print("in register bad " + bad + " " + rcode + " " + response_size);
  	failed_test = true;
-	test[test_number] = false;
 	if ( timeout[test_number] && timeout_is_failure[test_number]) {
 	  if (rcode > 0) {
-	    //	    print("in register rcode " + bad + " " + rcode + " " + response_size);
+	    print("in register rcode " + bad + " " + rcode + " " + response_size);
 	    abort_test = tests_run; // 
 	    return  true;   // we abort here.
 	  }
 	  set_reason("");                    // reset reason 
 	  return abort;    
 	}
+	return true;
     }
     test[test_number]  = true;      // got expected result ? 
     return false;
@@ -851,5 +851,47 @@ evaluate_resolver( String resolver, String id_msg) {
     evaluate_resolver( String resolver) {
 	return evaluate_resolver(resolver, null);
     }
+
+  private void
+  my_sleep(int time) { 
+    try { 
+      Thread.sleep(time); 
+    } catch (InterruptedException e) {
+      e.printStackTrace();
+    }
+  }
+
+
+  boolean 
+  test_anycast(String name, boolean debug) { 
+	boolean eq = true; 
+	String curr = myaddr(name); 
+	String pre;
+	long p_ttl, c_ttl;
+	if (debug) 
+	  System.out.println( "Start " + curr + " " );
+	if (curr.length() > 0) { // success 
+	  int i = 0;
+	  c_ttl = get_ttl();
+	  do { 
+	    my_sleep(1000 * ++i);
+	    pre = curr;
+	    p_ttl = c_ttl;
+	    curr = myaddr(name); 
+	    eq = curr.equals(pre); 
+	    c_ttl = get_ttl();
+	    if (debug) 
+	      System.out.println( i + " " + curr + " " + eq + " " + ttl);
+	  } while (eq  && (i < 25) && (c_ttl < p_ttl)) ;
+	}
+	return eq; 
+  }
+
+  boolean
+  test_anycast( String name) {
+    return test_anycast(name, false);
+  }
+
+
 }
 
