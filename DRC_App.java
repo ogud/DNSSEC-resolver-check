@@ -24,8 +24,10 @@ public class DRC_App  extends javax.swing.JFrame
 	protected JTextField addressField = null;
 	protected static final String identifying_string = "id_string";
 	protected static final String ip_address_string = "ip_address";
-	protected DefaultListModel<Behavior> resultsListModel = null;
-	protected JList<Behavior> resultsList = null;
+	//protected DefaultListModel<Behavior> resultsListModel = null;
+	protected DefaultListModel resultsListModel = null;
+	//protected JList<Behavior> resultsList = null;
+	protected JList resultsList = null;
 	protected final Semaphore available = new Semaphore(1, true);
 	protected String help_link = null;
 
@@ -134,7 +136,8 @@ public class DRC_App  extends javax.swing.JFrame
 
 		public void actionPerformed(ActionEvent e) {
 			
-			JList<?> list = (JList<?>)e.getSource();
+			//JList<?> list = (JList<?>)e.getSource();
+			JList list = (JList)e.getSource();
 			Behavior b = (Behavior) list.getSelectedValue();
 			String behavior_description = b.behavior;
 			if (behavior_description != null) {
@@ -212,8 +215,10 @@ public class DRC_App  extends javax.swing.JFrame
 		frame.add(addressField, c3);
 		
 		//Create a results list to display the results
-		resultsListModel = new DefaultListModel<Behavior>();
-		resultsList = new JList<Behavior>(resultsListModel);
+		//resultsListModel = new DefaultListModel<Behavior>();
+		resultsListModel = new DefaultListModel();
+		//resultsList = new JList<Behavior>(resultsListModel);
+		resultsList = new JList(resultsListModel);
 		resultsList.setSelectionMode(ListSelectionModel.SINGLE_SELECTION);
 		JScrollPane resultsScrollPane = new JScrollPane(this.resultsList);
 		resultsScrollPane.setVerticalScrollBarPolicy(

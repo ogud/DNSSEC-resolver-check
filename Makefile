@@ -64,7 +64,7 @@ APPLICATION_PROGCLASS= \
     DRC_App\$$3.class \
     DRC_App\$$Behavior.class 
 
-all: UI_DRC.class DNSSEC_Check.class
+all: UI_DRC.class DNSSEC_Check.class DRC_App.class
 
 UI_DRC.class: UI_DRC.java DNSSEC_resolver_check.class Translator.class 
 	${JAVAC} ${JFLAGS} UI_DRC.java  
