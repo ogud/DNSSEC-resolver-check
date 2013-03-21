@@ -39,7 +39,7 @@ case "Not a Resolver":
 case "TIMEOUT":
     echo "This host timed out when queried with a DNS question.";
     break;
-case "NOTDNSSEC":
+case "Not DNSSEC":
     echo "This is a DNS resolver, but is not DNSSEC aware and does not support validation by its clients.";
     break;
 case "Validator":

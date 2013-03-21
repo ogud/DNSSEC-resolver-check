@@ -13,7 +13,7 @@ public class Translator {
 	    trans.put("1a",  "[FT]............,2,=Not a Resolver.");
 	    trans.put("2",  ".[PFX][PFX][PFXT][PFX][PF][APF][APF][APF][APF][APF][APFT].,=TIMEOUT.,3");
 	    trans.put("3",  ".[PF][PF][PF][PF]........,=ANOMALOUS.,4");
-	    trans.put("4",  "PP...P[AP][AP].[AP]...,=NOTDNSSEC.,5");
+	    trans.put("4",  "PP...P[AP][AP].[AP]...,=Not DNSSEC.,5");
 	    trans.put("5",  "......PP.P...,7,8");
 	    trans.put("7",  ".............,7a,=Validator");
 	    trans.put("7a", "....P...A....,DNAME,7b");
