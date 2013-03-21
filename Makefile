@@ -23,8 +23,10 @@
 # you can set the CLASSPATH from below by using eval `make CP` 
 # if DNSJAVA is set the current version of DNSJAVA and compiled
 #DNSJAVA=/home/ogud/src/dnsjava-2.1.4/dnsjava-2.1.4.jar
+DNSJAVA_vers=2.1.4
 DNSJAVA=../dnsjava/dnsjava-2.1.4
-DNSJAVA=../dnsjava-2.1.4
+DNSJAVA=../dnsjava-${DNSJAVA_vers}
+DNSJAVA_jar=dnsjava-${DNSJAVA_vers}.jar
 #DNSJAVA=dnsjava-2.1.4.jar
 #constants only change if you use non Oracle java 
 
@@ -102,10 +104,12 @@ applet_jar: DNSSEC_Check.class MySwingWorker.class
 
 application_jar: DRC_App.class
 	${JAR} ${APPLICATION_JARFILE} Manifest_Application.txt ${APPLICATION_PROGCLASS}
-    
-jars: jar applet_jar application_jar
-	${COPY} orig-dnsjava-2.1.4.jar dnsjava-2.1.4.jar
-	jarsigner dnsjava-2.1.4.jar myKeyName
+
+${DNSJAVA_jar}: ${DNSJAVA}/${DNSJAVA_jar}
+	cp ${DNSJAVA}/${DNSJAVA_jar} . 
+
+jars: jar applet_jar application_jar ${DNSJAVA_jar}
+	jarsigner ${DNSJAVA_jar} myKeyName
 	jarsigner ${JARFILE} myKeyName
 	jarsigner ${APPLET_JARFILE} myKeyName
 	jarsigner ${APPLICATION_JARFILE} myKeyName
