@@ -161,6 +161,7 @@ public class DRC_App  extends javax.swing.JFrame
 	private void InitComponents() {
 		JFrame frame = new JFrame("DNSSEC Resolver Check");
 		frame.setLayout(new GridBagLayout());
+		frame.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 		JLabel commentLabel = new JLabel("Enter an identifying message:");
 		GridBagConstraints c0 = new GridBagConstraints();
