@@ -1,2 +1,2 @@
-Class-Path: . dnsjava-2.1.4.jar UI_DRC-0.5.8.jar DNSSEC_Check-1.0.2.jar
+Class-Path: . dnsjava-2.1.4.jar UI_DRC-0.5.9.jar DNSSEC_Check-1.0.2.jar
 Main-Class: DRC_App
