@@ -220,7 +220,7 @@ register_test_result(int test_number, boolean result, String msg,
 	  set_reason("");                    // reset reason 
 	  return abort;    
 	}
-	return true;
+	return abort;
     }
     test[test_number]  = true;      // got expected result ? 
     return false;
