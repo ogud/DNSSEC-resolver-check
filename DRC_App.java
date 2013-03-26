@@ -55,7 +55,7 @@ public class DRC_App  extends javax.swing.JFrame
 				available.release();
 				if (g != null) {
 				    tr = new Translator().translate(g);
-				    return g + ", " + tr;
+				    return tr + "  (" + g + ")";
 				} else {
 					return "Failed";				
 				}
@@ -114,11 +114,11 @@ public class DRC_App  extends javax.swing.JFrame
 				return getAppletInfo().split("\n")[0];
 			} 
 
-			String resolverType = isLocal? "local" : "";
+			String resolverType = isLocal? "Local " : "";
 			if (behavior == null) {
 				return "Checking " + resolverType + " resolver at " + ipAddress;
 			} else {
-				return "Behavior of " + resolverType + " resolver at " + ipAddress + " is " + behavior;
+				return "" + resolverType + "Resolver at " + ipAddress + ":  " + behavior;
 			}
 		}
 	}
@@ -127,27 +127,6 @@ public class DRC_App  extends javax.swing.JFrame
 	 * 
 	 */
 	private static final long serialVersionUID = -6070152429809976637L;
-		
-	Action displayAction = new AbstractAction() {
-		/**
-		 * 
-		 */
-		private static final long serialVersionUID = -7733073361670637089L;
-
-		public void actionPerformed(ActionEvent e) {
-			
-			//JList<?> list = (JList<?>)e.getSource();
-			JList list = (JList)e.getSource();
-			Behavior b = (Behavior) list.getSelectedValue();
-			String behavior_description = b.behavior;
-			if (behavior_description != null) {
-				System.out.println(behavior_description);
-				String[] pieces = behavior_description.split(",");
-				if (pieces.length == 2) {
-				}				
-			}
-		}
-	};
 
 	public static void main (String[] args) {
 		final DRC_App theApp = new DRC_App();
@@ -247,7 +226,7 @@ public class DRC_App  extends javax.swing.JFrame
 
     public String getAppletInfo() {
         return "DRC App v1.0.0, 19 March 2013.\n"
-               + "  Author: Bob Novas.\n"
+               + "  Authors: Ólafur Guðmundsson, Bob Novas.\n"
                + "  Checks the DNSSEC Features of DNS Resolvers.";
     }
 
