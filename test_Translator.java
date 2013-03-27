@@ -1,12 +1,15 @@
-import java.io.*;
 
-public class test {
+public class test_Translator {
     public static void
     main(String[] args) {
         Translator tr = new Translator();
         //Translator.set_debug(true);
 
         String b;
+
+        b = tr.translate("PPPPPPAAPAAAP");
+        System.out.println("Expect Partial Validator(DNAME), b=" + b);
+        
         b = tr.translate("PPPPPPPPPPPPP");
         System.out.println("Expect DNSSEC Aware, b=" + b);
 
