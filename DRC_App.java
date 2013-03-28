@@ -231,6 +231,7 @@ public class DRC_App  extends javax.swing.JFrame
     }
 
 	public void local() {
+		ResolverConfig.refresh();
 		String list [] = ResolverConfig.getCurrentConfig().servers(); 
 		for( int num = 0; num < list.length; num++) {
 			int i = resultsListModel.getSize();

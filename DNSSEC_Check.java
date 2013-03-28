@@ -134,8 +134,8 @@ public class DNSSEC_Check extends JApplet {
 	}
 
     public String getAppletInfo() {
-        return "DNSSEC_Check Applet v1.0.1k, 19 Feb 2013.\n"
-               + "  Author: Bob Novas.\n"
+        return "DNSSEC_Check Applet v1.0.2, 26 Mar 2013.\n"
+               + "  Authors: Ólafur Guðmundsson, Bob Novas.\n"
                + "  Checks the DNSSEC Features of DNS Resolvers.";
     }
 }
