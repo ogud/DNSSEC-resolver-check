@@ -226,7 +226,7 @@ public class DRC_App  extends javax.swing.JFrame
 
     public String getAppletInfo() {
         return "DRC App v1.0.0, 19 March 2013.\n"
-               + "  Authors: Ólafur Guðmundsson, Bob Novas.\n"
+               + "  Authors: Ã“lafur GuÃ°mundsson, Bob Novas.\n"
                + "  Checks the DNSSEC Features of DNS Resolvers.";
     }
 
