@@ -88,9 +88,25 @@ get_resolver(String resolver) {
       *  Arguments: domain: the domain name to look up
       *             type: the type of the record to lookup
       *             res: The resolver to use t
+      *             debug: turn on debug output 
+      *             noRec: suppress RD flag on query
       */
+
+
+Message 
+make_query( String domain, int type, SimpleResolver res) {
+    return make_query(domain, type, res, false, false);
+}
+
 Message 
 make_query( String domain, int type, SimpleResolver res, boolean debug) {
+    return make_query(domain, type, res, debug, false);
+}
+
+
+Message 
+make_query( String domain, int type, SimpleResolver res, boolean debug, 
+		boolean noRec) {
     Message query, response = null;
     Name name;
     saw_timeout = false;
@@ -99,7 +115,7 @@ make_query( String domain, int type, SimpleResolver res, boolean debug) {
     
     Record rec = Record.newRecord(name, type, DClass.IN);
     try {
- 	query = Message.newQuery(rec);
+	query = Message.newQuery(rec, noRec);
     } 
     catch (Exception e) {
         print( "Query Construction Error " + domain + " " + 
@@ -124,24 +140,17 @@ make_query( String domain, int type, SimpleResolver res, boolean debug) {
  	return null;
     }
 
-    if (debug)  {
- 	String size= " Size " + domain + " " + Type.string(type) + " " 
- 	    + response.numBytes();
- 	print(size);
-    }
+    if (debug)
+ 	print (" Size " + domain + " " + Type.string(type) + " " 
+	       + response.numBytes());
     return response;
-}
-
-Message 
-make_query( String domain, int type, SimpleResolver res) {
-  return make_query(domain, type, res, false);
 }
 
   /* 
    * addr_lookup will look up the public address of this host or a resolver used 
    * to resolve the query
-   * to get the address of this host send the query directly to one of our servers
-   * (or use the google magic query
+   * to get the address of this host send the query directly to one of our 
+   * servers or use the google magic query
    * or to get the resolver send the query to a resolver
    * Right now this only supports IPv4 queries TODO 
    * this is the generic function that takes resolver name/addr and lookup name 
