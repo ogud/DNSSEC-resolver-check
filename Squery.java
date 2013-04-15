@@ -115,13 +115,16 @@ make_query( String domain, int type, SimpleResolver res, boolean debug,
     
     Record rec = Record.newRecord(name, type, DClass.IN);
     try {
-	query = Message.newQuery(rec, noRec);
+	//	query = Message.newQuery(rec, noRec);
+	query = Message.newQuery(rec);
     } 
     catch (Exception e) {
         print( "Query Construction Error " + domain + " " + 
 			    Type.string(type));
  	return null;
     }
+    if (noRec)
+	query.getHeader().unsetFlag(Flags.RD);
     try { 
  	response = res.send(query);
     }
