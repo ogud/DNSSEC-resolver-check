@@ -11,7 +11,7 @@ public class Translator {
 	    trans.put("0",  "NAR,1,=Not a Resolver.,0,0");
         trans.put("1",  "R=([a-zA-Z]+).*,1a,=*.,0,0");
 	    trans.put("1a", "[FT]............,2,=Not a Resolver.,0,0");
-	    trans.put("2",  ".[PFX][PFX][PFXT][PFX][PF][APF][APF][APF][APF][APF][APFT].,=TIMEOUT.,3,0,0");
+	    trans.put("2",  ".[PFX][PFX][PFXT][PFX][PF][APF][APF][APF][APF][APF][APFT].,=Unexpected Result.,3,0,0");
 	    trans.put("3",  ".[PF][PF][PF][PF]........,=ANOMALOUS.,4,0,0");
 	    trans.put("4",  "PP...P[AP][AP].[AP]...,=Not DNSSEC.,5,0,0");
 	    trans.put("5",  "......PP.P...,7,8,0,0");
