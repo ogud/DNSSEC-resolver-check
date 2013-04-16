@@ -12,7 +12,6 @@ public class Translator {
         trans.put("1",  "R=([a-zA-Z]+).*,1a,=*.,0,0");
 	    trans.put("1a", "[FT]............,2,=Not a Resolver.,0,0");
 	    trans.put("2",  ".[PFX][PFX][PFXT][PFX][PF][APFXT][APFXT][APFXT][APFXT][APFXT][APFTXT].,=Unexpected Result.,3,0,0");
-	    //	    trans.put("3",  ".[PF][PF][PF][PF]........,=ANOMALOUS.,4,0,0");
 	    trans.put("3",  ".[PF][PF][PF][PF]........,=OLD/Bad.,4,0,0");
 	    trans.put("4",  "PP...P[AP][AP].[AP]...,=Not DNSSEC.,5,0,0");
 	    trans.put("5",  "......PP.P...,7,8,0,0");
@@ -56,7 +55,6 @@ public class Translator {
 	        	Pattern pattern = Pattern.compile(pieces[0]);
 	            int set_inhibits = new Integer(pieces[3]);
 	            int mbz_inhibits = new Integer(pieces[4]);
-	            inhibits |= set_inhibits;
 
 	            String state = next_state;
 	            next_state = "NOT_A_STATE";
@@ -81,6 +79,8 @@ public class Translator {
 	            }
 	            else
 	            {
+	            	// oddly, set the really special purpose inhibits on the negative match
+		            inhibits |= set_inhibits;
 	                match_action = pieces[1];
 	                alt_action = pieces[2];
 	            }
