@@ -207,20 +207,20 @@ register_test_result(int test_number, boolean result, String msg,
     if (debug) 
       print("in register result" + bad + " " + rcode + " " + response_size);
     if (result == bad ) {   		// handle failed test 
-      if (debug) 
-	print("in register bad " + bad + " " + rcode + " " + response_size);
- 	failed_test = true;
-	if ( timeout[test_number] && timeout_is_failure[test_number]) {
-	  if (rcode > 0) {
-	    if (debug) 
-	      print("in register rcode " + bad + " " + rcode + " " + response_size);
-	    abort_test = tests_run; // 
-	    return  true;   // we abort here.
-	  }
-	  set_reason("");                    // reset reason 
-	  return abort;    
-	}
-	return abort;
+    	if (debug) 
+    		print("in register bad " + bad + " " + rcode + " " + response_size);
+    	failed_test = true;
+    	if ( timeout[test_number] && timeout_is_failure[test_number]) {
+    		if (rcode > 0) {
+    			if (debug) 
+    				print("in register rcode " + bad + " " + rcode + " " + response_size);
+    			abort_test = tests_run; // 
+    			return  true;   // we abort here.
+    		}
+    		set_reason("");                    // reset reason 
+    		return abort;    
+    	}
+    	return abort;
     }
     test[test_number]  = true;      // got expected result ? 
     return false;
@@ -234,50 +234,50 @@ display_result() {
 
 static String 
 test_letter(int i) {
-    String letter = "Y";
-    if (test_performed[i] == false) 
-	letter = "S"; // Skipped 
-    else if (R_code[i] > 0) 
-	letter = "R=" + Rcode.string(R_code[i]) + ",";
-    else if (timeout[i] == true && timeout_is_failure[i] == false) 
-        letter = "T";
-    else if (test[i] == true) 
-	if (ad_res[i] == true)    letter = "A"; // Passed with AD set 
-	else	    		  letter = "P"; // Passed 
-    else 
-	if (ad_res[i] == false)   letter = "F"; // Failed 
-	else   	                  letter = "X"; // Failed with AD set BAD
-    return letter;
+	String letter = "Y";
+	if (test_performed[i] == false) 
+		letter = "S"; // Skipped 
+	else if (R_code[i] > 0) 
+		letter = "R=" + Rcode.string(R_code[i]) + ",";
+	else if (timeout[i] == true && timeout_is_failure[i] == false) 
+		letter = "T";
+	else if (test[i] == true) 
+		if (ad_res[i] == true)    letter = "A"; // Passed with AD set 
+		else	    		  letter = "P"; // Passed 
+	else 
+		if (ad_res[i] == false)   letter = "F"; // Failed 
+		else   	                  letter = "X"; // Failed with AD set BAD
+	return letter;
 }
 
     // Function to output results returns a message of results 
 static String
 test_results() { 
-    String out = ""; // Summary line 
-    if (failed_test) {
- 	// First report on each test 
-	int i;
-	String rep = ""; // Explanation of failed tests
- 	for (i = 1; i < test.length; i++) {
- 	    out = out + " T" + (i) + test_letter(i) + "/" + test_size[i];
-	    if (test_performed[i] == false) 
-		rep = rep + " T" + (i) + " " + test_name[i] + 
-		    " := Skipped\n" ;
-	    else if (test[i] == false) { // failed 
- 		if (test_msg[i] != null) 
- 		    rep = rep + " T" + (i) + " " + test_name[i] 
- 			+ " := " + test_msg[i] + "\n";
- 	    }
- 	} 
- 	if (detailed_report) 
- 	    out = out +"\nFailed tests:\n" + rep ;
-	// 	else 
-	// 	    out = "";
-    } else if (tests_run > 1) 
- 	out = "All tests passed";
-    else 
-        out = "No Tests Run";
-    return out;
+	String out = ""; // Summary line 
+	if (failed_test) {
+		// First report on each test 
+		int i;
+		String rep = ""; // Explanation of failed tests
+		for (i = 1; i < test.length; i++) {
+			out = out + " T" + (i) + test_letter(i) + "/" + test_size[i];
+			if (test_performed[i] == false) 
+				rep = rep + " T" + (i) + " " + test_name[i] + 
+				" := Skipped\n" ;
+			else if (test[i] == false) { // failed 
+				if (test_msg[i] != null) 
+					rep = rep + " T" + (i) + " " + test_name[i] 
+							+ " := " + test_msg[i] + "\n";
+			}
+		} 
+		if (detailed_report) 
+			out = out +"\nFailed tests:\n" + rep ;
+		// 	else 
+		// 	    out = "";
+	} else if (tests_run > 1) 
+		out = "All tests passed";
+	else 
+		out = "No Tests Run";
+	return out;
 }
 
     // function to return the string result of all the tests
@@ -299,32 +299,32 @@ string_result() {
     //
 static int 
 count_rr(Record ca[], Name na, int type) { 
-    int i, cnt = 0;
-    Name nn = null;
-    String str;
-    if (debug) {
- 	str = "Count_rr start " + na + " type=" + Type.string(type) + " size=" 
-	    + ca.length;
- 	print (str);
-    }
-    for (i = 0; i < ca.length; i++) {
- 	if (debug)
- 	    nn = ca[i].getName();  // DO I realy need names ?? OGUD 
- 	if (ca[i].getType() == type) {
-	    cnt++; 
-	    if (debug) {
-		str = "count_rr loop i=" + i + " type=" + ca[i].getType() + 
-		    " cnt=" + cnt;
+	int i, cnt = 0;
+	Name nn = null;
+	String str;
+	if (debug) {
+		str = "Count_rr start " + na + " type=" + Type.string(type) + " size=" 
+				+ ca.length;
 		print (str);
-	    }
- 	}
-    }
-    if (debug) {
- 	str = "count_rr END" + ca.length + " " + nn + " == " + na + 
- 	    " type=" + Type.string(type) + " cnt=" + cnt;
- 	print(str);
-    }
-    return cnt;
+	}
+	for (i = 0; i < ca.length; i++) {
+		if (debug)
+			nn = ca[i].getName();  // DO I realy need names ?? OGUD 
+		if (ca[i].getType() == type) {
+			cnt++; 
+			if (debug) {
+				str = "count_rr loop i=" + i + " type=" + ca[i].getType() + 
+						" cnt=" + cnt;
+				print (str);
+			}
+		}
+	}
+	if (debug) {
+		str = "count_rr END" + ca.length + " " + nn + " == " + na + 
+				" type=" + Type.string(type) + " cnt=" + cnt;
+		print(str);
+	}
+	return cnt;
 }
     /* first_check is used to check minimal resolver behavior 
        this function tries to catch all errors and exceptions
@@ -338,47 +338,47 @@ count_rr(Record ca[], Name na, int type) {
     */
 private boolean
 first_check( SimpleResolver res, String domain, int qtype, boolean edns) {
-    Message query, response;
-    response =  make_query(domain, qtype, res, debug); 
-    if (response == null) 
- 	return false; // failed 
-    ad_add(response.getHeader().getFlag(Flags.AD)); // log ad bit 
+	Message query, response;
+	response =  make_query(domain, qtype, res, debug); 
+	if (response == null) 
+		return false; // failed 
+	ad_add(response.getHeader().getFlag(Flags.AD)); // log ad bit 
 
-    if (debug)
- 	print (response);
+	if (debug)
+		print (response);
 
-    rcode = response.getRcode();
-    if (rcode != Rcode.NOERROR) { 
-        add_reason( "DNS Error " + Rcode.string(rcode));
- 	return false;
-    }
-    if (!(response.getHeader().getFlag(Flags.RA))) {
-        add_reason( "Error Not a recursive resolver RA flag missing");
- 	return false;
-    }
-    Record Ans [] = response.getSectionArray(Section.ANSWER);
-    
-    Name name = Str_to_Name(domain);
-    if(count_rr(Ans, name, qtype) == 0) {
-        add_reason( "No " + Type.string(qtype) + " seen in answer"); 
- 	return false;
-    }
+	rcode = response.getRcode();
+	if (rcode != Rcode.NOERROR) { 
+		add_reason( "DNS Error " + Rcode.string(rcode));
+		return false;
+	}
+	if (!(response.getHeader().getFlag(Flags.RA))) {
+		add_reason( "Error Not a recursive resolver RA flag missing");
+		return false;
+	}
+	Record Ans [] = response.getSectionArray(Section.ANSWER);
 
-    if (edns) {
- 	OPTRecord ORec = response.getOPT();
- 	int size = response.numBytes();
- 	if (ORec == null)  {
-	    add_reason( "No Opt returned ");
- 	    return false;
- 	} else if( size > 512) { 
- 	    big_ok = true;
- 	} else if (ORec.getPayloadSize() < size) {
-	    add_reason( "Small ENDS reported " +  ORec.getPayloadSize() + 
-			" < " + size);
- 	    //	    return false;	    // not a failure 
- 	}
-    }
-    return true;
+	Name name = Str_to_Name(domain);
+	if(count_rr(Ans, name, qtype) == 0) {
+		add_reason( "No " + Type.string(qtype) + " seen in answer"); 
+		return false;
+	}
+
+	if (edns) {
+		OPTRecord ORec = response.getOPT();
+		int size = response.numBytes();
+		if (ORec == null)  {
+			add_reason( "No Opt returned ");
+			return false;
+		} else if( size > 512) { 
+			big_ok = true;
+		} else if (ORec.getPayloadSize() < size) {
+			add_reason( "Small ENDS reported " +  ORec.getPayloadSize() + 
+					" < " + size);
+			//	    return false;	    // not a failure 
+		}
+	}
+	return true;
 }
 
     /* perfrom checks that the resolver does the right thing for DNAME's 
@@ -684,69 +684,69 @@ tcp_test(String resolver) {
     // runs all the tests for one resolver input name or address of resolver
 private boolean 
 run_tests( String resolver, int fail_allowed) {
-    big_ok = false;
-    SimpleResolver res = get_resolver(resolver, debug);
-    String msg = null;
-    if (res == null) {
-        add_reason( "Can not create resolver"); 
- 	return false;
-    }
-    res.setTCP(false); // do not fall back to tcp
-    res.setIgnoreTruncation(true);
-    
-    // does it answer questions 
-    boolean first_one = first_check(res, "com.", Type.SOA, false);
-    if (register_test_result(1, first_one, 
-		    msg = "Can't resolve com. soa not a useful resolver ", 
- 			      false))
- 	return false;  // not a resolver abort 
-    if (first_one == false)  // force stop if this one fails 
- 	return false;
+	big_ok = false;
+	SimpleResolver res = get_resolver(resolver, debug);
+	String msg = null;
+	if (res == null) {
+		add_reason( "Can not create resolver"); 
+		return false;
+	}
+	res.setTCP(false); // do not fall back to tcp
+	res.setIgnoreTruncation(true);
 
-    // check for old DNS extensions
-    res.setEDNS(0, ed_buff, 0, null); //EDNS0 support
-    boolean save_abort = abort; 
-    abort = true;
-    if (register_test_result( 2, first_check( res, "org." , Type.DNSKEY, true), 
- 			       msg = "org DNSKEY lookup failed RFC4034", 
- 			       false)) {
-	if (--fail_allowed < 0) 
-	    return false;
-    }
-    abort = save_abort;
-    
-    // Check for new/unknown record (needs updating over time) 
-    boolean fc = first_check( res, "tlsa.ogud.com", /* Type.TLSA */  52, true);
-    if (register_test_result( 3, fc, msg = "Unknown RR failure RFC3597", 
- 			      false) || fc == false) {
-      if (--fail_allowed < 0) return false;
- 	//	return grade;  // No abort here 
-    } 
+	// does it answer questions 
+	boolean first_one = first_check(res, "com.", Type.SOA, false);
+	if (register_test_result(1, first_one, 
+			msg = "Can't resolve com. soa not a useful resolver ", 
+			false))
+		return false;  // not a resolver abort 
+	if (first_one == false)  // force stop if this one fails 
+		return false;
 
-    // Is TCP supported 
-    if (register_test_result(4, tcp_test(resolver), 
- 			     msg = "TCP Failed RFC1035/RFC5966 violation", 
- 			     false)) {
- 	return true;
-    }
-    
-    // is DNAME supported and returned 
-    if (register_test_result(5, dname_check(res, "grade.goal.ogud.com.", 
-					    Type.TXT, "grade.shinkuro.com.", 
-					    false), 
- 			     msg = "DNAME Not Supported RFC2672/RFC6672", 
- 			     false))
- 	return true; 
+	// check for old DNS extensions
+	res.setEDNS(0, ed_buff, 0, null); //EDNS0 support
+	boolean save_abort = abort; 
+	abort = true;
+	if (register_test_result( 2, first_check( res, "org." , Type.DNSKEY, true), 
+			msg = "org DNSKEY lookup failed RFC4034", 
+			false)) {
+		if (--fail_allowed < 0) 
+			return false;
+	}
+	abort = save_abort;
 
-    
+	// Check for new/unknown record (needs updating over time) 
+	boolean fc = first_check( res, "tlsa.ogud.com", /* Type.TLSA */  52, true);
+	if (register_test_result( 3, fc, msg = "Unknown RR failure RFC3597", 
+			false) || fc == false) {
+		if (--fail_allowed < 0) return false;
+		//	return grade;  // No abort here 
+	} 
 
-    // Make sure we got some answer that was bigger than 512 bytes i.e. via
-    // Edns0 or TCP 
-    if (register_test_result(6, big_ok, msg = "No answers > 512 seen", 
-			     false))
- 	return true;
-    
-    return dnssec_tests(res);
+	// Is TCP supported 
+	if (register_test_result(4, tcp_test(resolver), 
+			msg = "TCP Failed RFC1035/RFC5966 violation", 
+			false)) {
+		return true;
+	}
+
+	// is DNAME supported and returned 
+	if (register_test_result(5, dname_check(res, "grade.goal.ogud.com.", 
+			Type.TXT, "grade.shinkuro.com.", 
+			false), 
+			msg = "DNAME Not Supported RFC2672/RFC6672", 
+			false))
+		return true; 
+
+
+
+	// Make sure we got some answer that was bigger than 512 bytes i.e. via
+	// Edns0 or TCP 
+	if (register_test_result(6, big_ok, msg = "No answers > 512 seen", 
+			false))
+		return true;
+
+	return dnssec_tests(res);
 }
 
 public String 
