@@ -1,2 +1,0 @@
-Class-Path: . dnsjava-2.1.4.jar 
-Main-Class: UI_DRC
