@@ -1,0 +1,20 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<jnlp spec="1.0+" codebase="" href="">
+    <information>
+        <title>DNSSEC Resolver Check App</title>
+        <vendor>Shinkuro</vendor>
+    </information>
+    <resources>
+        <!-- Application Resources -->
+        <j2se version="1.6+" />
+        <jar href="DRC_App-1.0.0.jar"/>
+    </resources>
+    <application-desc 
+         name="DNSSEC Resolver Check Application"
+         main-class="DRC_App">
+    </application-desc>
+    <update check="background"/>
+	<security>
+	    <all-permissions/>
+	</security>
+</jnlp> 

@@ -1,0 +1,181 @@
+<!DOCTYPE html PUBLIC "-//W3C//DTD HTML 4.01 Transitional//EN" "http://www.w3.org/TR/html4/loose.dtd">
+<html lang="en-us">
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=ISO-8859-1" />
+<title>DNSSEC Check Resolver Help</title>
+<style>
+table, td, th
+{
+	border: 1px solid black;
+}
+td
+{
+	vertical-align:top;
+}
+</style>
+</head>
+
+<body>
+<h1>Test Results String</h1>
+<p>The results string has 13 characters that from left to right correspond to the 13 tests described in the table below.
+The leftmost letter in the string corresponds to test 1 (T1), the second letter to test 2, and so forth.  Each character
+in the string is a letter from the following list:
+<ul>
+<li>S - test skipped
+<li>T - test timed out
+<li>A - test passed and the Authoritative Data (AD) flag bit is set in the response
+<li>P - test passed and the AD flag bit is not set
+<li>F - test failed and the AD flag bit is not set
+<li>X - test failed and the AD flag bit is set 
+</ul>
+
+<table>
+
+<tr>
+<th>Test</th>
+<th>Description: Target Resolver...</th>
+<th>Test Query (Name/RR Type)</th>
+<th>Possible Results</th>
+</tr>
+
+<tr>
+<td>T1</td>
+<td>Correctly answers a DNS query.</td>
+<td>com./SOA</td>
+<td>
+<b>Pass</b>: An answer is returned.<br>
+<b>Fail</b>: No answer is returned.
+</td>
+</tr>
+
+<tr>
+<td>T2</td>
+<td>Supports EDNS.</td>
+<td>org/DNSKEY</td>
+<td>
+<b>Pass</b>: An answer is returned w/OPT RR.<br>
+<b>Fail</b>: No answer is returned or no OPT RR.
+</td>
+</tr>
+
+<tr>
+<td>T3</td>
+<td>Correctly supports unknown RR types.</td>
+<td>tlsa.ogud.com/TLSA</td>
+<td>
+<b>Pass</b>: An answer is returned w/unknown type.<br>
+<b>Fail</b>: No answer is returned.
+</td>
+</tr>
+
+<tr>
+<td>T4</td>
+<td>Listens on TCP</td>
+<td>net/SOA via TCP</td>
+<td>
+<b>Pass</b>: An answer is returned.<br>
+<b>Fail</b>: No answer is returned.
+</td>
+</tr>
+
+<tr>
+<td>T5</td>
+<td>Understands DNAME processing.</td>
+<td>grade.goal.ogud.com/TXT
+</td>
+<td>
+<b>Pass</b>: Correct DNAME processing in final response<br>
+<b>Fail</b>: No DNAME response or incorrect CNAME processing
+</td>
+</tr>
+
+<tr>
+<td>T6</td>
+<td>Can process responses >512 bytes.</td>
+<td>N/A</td>
+<td>
+<b>Pass</b>: An answer packet >512 bytes is received<br>
+<b>Fail</b>: Answer packet is truncated or no answer is received
+</td>
+</tr>
+
+<tr>
+<td>T7</td>
+<td>Validates DNSSEC signatures.</td>
+<td>iab.org/SOA</td>
+<td>
+<b>Pass</b>: Answer is returned w/the AD bit set, indicating authentication check performed<br>
+<b>Fail</b>: Answer is returned w/o the AD bit set, or no answer is returned
+</td>
+</tr>
+
+<tr>
+<td>T8</td>
+<td>Correctly queries for DS RR type.</td>
+<td>ietf.org/DS</td>
+<td>
+<b>Pass(AD)</b>: Answer returned w/the DS RR and AD bit set<br>
+<b>Pass(no AD)</b>: Answer returned w/the DS RR<br>
+<b>Fail</b>: No answer returned or "No Data" error message
+</td>
+</tr>
+
+<tr>
+<td>T9</td>
+<td>Returns correct signed DNAME response.</td>
+<td>grade.goal.ogud.com/TXT
+</td>
+<td>
+<b>Pass (AD)</b>: Answer returned w/the DNAME RR and AD bit set<br>
+<b>Pass(no AD)</b>: Answer returned w/correct processing<br>
+<b>Fail</b>: No answer returned or "No Data" error message
+</td>
+</tr>
+
+<tr>
+<td>T10</td>
+<td>Understands authenticated denial of existence using NSEC RRs.</td>
+<td>us/SPF</td>
+<td>
+<b>Pass (AD)</b>: Answer returned w/NSEC RRs and AD bit set<br>
+<b>Pass(no AD)</b>: Answer returned w/NSEC RRs<br>
+<b>Fail</b>: No answer returned or "No Data" error message
+</td>
+</tr>
+
+<tr>
+<td>T11</td>
+<td>Understands authenticated denial of existence using NSEC3 RRs.</td>
+<td>de/SPF</td>
+<td>
+<b>Pass (AD)</b>: Answer returned w/NSEC RRs and AD bit set<br>
+<b>Pass(no AD)</b>: Answer returned w/NSEC RRs<br>
+<b>Fail</b>: No answer returned or "No Data" error message
+</td>
+</tr>
+
+<tr>
+<td>T12</td>
+<td>Supports large UDP packets.</td>
+<td>shinkuro.net/A</td>
+<td>
+<b>Pass (AD)</b>: Answer returned in UDP packet w/AD bit set<br>
+<b>Pass(no AD)</b>: Answer returned in UDP packet but w/o AD bit set<br>
+<b>Fail</b>: No answer returned or truncated response
+</td>
+</tr>
+
+<tr>
+<td>T13</td>
+<td>Returns bogus (invalid) DNSSEC responses.</td>
+<td>dnssec-failed.org/SOA
+</td>
+<td>
+<b>Pass</b>: SERVFAIL error message returned<br>
+<b>Fail</b>: Response returned w/o AD bit set
+</td>
+</tr>
+
+</table>
+</body>
+</html>
