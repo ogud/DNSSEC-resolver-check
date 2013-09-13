@@ -1,8 +1,14 @@
 About DNSSEC-resolver-check
 ===========================
 
-This is a set of java classes application that evaluates how well a
-resolver supports DNSSEC as seen from the location that the applicaiton runs. 
+This project consists of DNSSEC-resolver-check, implemented in java, and 
+pyDRC, a subset of DNSSEC-resolver-check, implemented in python.
+
+java
+----
+DNSSEC-resolver-check (the java code) is a set of java classes that implement
+an application that evaluates how well a resolver supports DNSSEC as seen from 
+the location at which the applicaiton runs. 
 
 The evaluation is submitted to a central server operated by us. 
 
@@ -58,4 +64,8 @@ If all these files are present in a php server folder, and you point a browser a
 you should get the DRC web page.
 
 
-
+python
+------
+The python code is a set of python classes that implements the DNSSEC-resolver-check
+functionality as a library, along with a simple, console user interface. See UI_DRC.py
+for usage.
