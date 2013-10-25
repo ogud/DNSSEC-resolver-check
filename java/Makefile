@@ -96,13 +96,13 @@ Version.java: Makefile
 	echo 'public static String get_version() { return my_version; }}' >>Version.java
 
 jar: UI_DRC.class
-	${JAR} ${JARFILE} Manifest.txt ${PROGCLASS}
+	${JAR} ${JARFILE} Manifest.mf ${PROGCLASS}
 
 applet_jar: DNSSEC_Check.class MySwingWorker.class
-	${JAR} ${APPLET_JARFILE} Manifest_Applet.txt ${APPLET_PROGCLASS}
+	${JAR} ${APPLET_JARFILE} Manifest_Applet.mf ${APPLET_PROGCLASS}
 
 application_jar: DRC_App.class
-	${JAR} ${APPLICATION_JARFILE} Manifest_Application.txt ${APPLICATION_PROGCLASS}
+	${JAR} ${APPLICATION_JARFILE} Manifest_Application.mf ${APPLICATION_PROGCLASS}
 
 ${DNSJAVA_jar}: ${DNSJAVA}/${DNSJAVA_jar}
 	cp ${DNSJAVA}/${DNSJAVA_jar} . 
@@ -112,6 +112,10 @@ jars: jar applet_jar application_jar ${DNSJAVA_jar}
 	jarsigner ${JARFILE} myKeyName
 	jarsigner ${APPLET_JARFILE} myKeyName
 	jarsigner ${APPLICATION_JARFILE} myKeyName
+	#jarsigner -storetype pkcs12 -keystore bob.novas@shinkuro.com.pfx ${DNSJAVA_jar} "le-8eaa7292-fcc2-48d5-8f7e-824c2c488d2a"
+	#jarsigner -storetype pkcs12 -keystore bob.novas@shinkuro.com.pfx ${JARFILE} "le-8eaa7292-fcc2-48d5-8f7e-824c2c488d2a"
+	#jarsigner -storetype pkcs12 -keystore bob.novas@shinkuro.com.pfx ${APPLET_JARFILE} "le-8eaa7292-fcc2-48d5-8f7e-824c2c488d2a"
+	#jarsigner -storetype pkcs12 -keystore bob.novas@shinkuro.com.pfx ${APPLICATION_JARFILE} "le-8eaa7292-fcc2-48d5-8f7e-824c2c488d2a"
 
 clean: 
 	/bin/rm -f ${JARFILE} ${APPLET_JARFILE} ${APPLICATION_JARFILE}  *.class *# *~

@@ -1,20 +1,29 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<jnlp spec="1.0+" codebase="" href="">
+<jnlp spec="1.0+" codebase="http://superawesum.novas.us/DSC-3" href="DRC_App.jnlp">
     <information>
         <title>DNSSEC Resolver Check App</title>
         <vendor>Shinkuro</vendor>
+        <description kind="short">Characterize your DNS resolvers</description>
+        <icon kind="splash" href="splashscreenicon.png"/>
+        <icon href="desktopicon.png"/>
+        <offline-allowed/>
+        <shortcut online="true">
+            <desktop/>
+        </shortcut>
     </information>
+	<security>
+	    <all-permissions/>
+	</security>
     <resources>
-        <!-- Application Resources -->
-        <j2se version="1.6+" />
+        <j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se" />
         <jar href="DRC_App-1.0.0.jar"/>
+        <jar href="DNSSEC_Check-1.0.2.jar"/>
+        <jar href="UI_DRC-0.5.9.jar"/>
+        <jar href="dnsjava-2.1.4.jar"/>
     </resources>
     <application-desc 
          name="DNSSEC Resolver Check Application"
          main-class="DRC_App">
     </application-desc>
     <update check="background"/>
-	<security>
-	    <all-permissions/>
-	</security>
 </jnlp> 
